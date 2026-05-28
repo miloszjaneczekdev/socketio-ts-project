@@ -1,122 +1,313 @@
-import { useContext, useEffect, useMemo, useState } from "react"
-import { useNavigate } from "react-router-dom"
-import { SocketContext } from "./SocketProvider"
+import { useContext, useEffect, useMemo, useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { SocketContext } from './SocketProvider'
+import SiteFooter from './SiteFooter'
+import styles from './Lobbies.module.css'
+
+const RESPONSE_TIMEOUT_MS = 5000
 
 type PublicLobby = {
   code: string
   name: string
   playersCount: number
   maxPlayers?: number
-  state?: "lobby" | "game" | "summary"
+  state?: 'lobby' | 'game' | 'summary'
   isPrivate?: boolean
   mode?: string
   len?: number | string
 }
 
+const PAPER_COLORS = [
+  'paperBlue',
+  'paperGreen',
+  'paperYellow',
+  'paperRed',
+] as const
+
+const PAPER_POSES = [
+  'poseA',
+  'poseB',
+  'poseC',
+  'poseD',
+  'poseE',
+  'poseF',
+  'poseG',
+  'poseH',
+] as const
+
+const CORNER_TAPE_VARIANTS = [
+  'tapeAll',
+  'tapeNoTopLeft',
+  'tapeNoTopRight',
+  'tapeNoBottomLeft',
+  'tapeNoBottomRight',
+  'tapeOnlyTop',
+  'tapeOnlyBottom',
+  'tapeDiagonalA',
+  'tapeDiagonalB',
+] as const
+
+function getStableIndex(input: string, length: number) {
+  let hash = 0
+
+  for (let i = 0; i < input.length; i += 1) {
+    hash = (hash * 31 + input.charCodeAt(i)) | 0
+  }
+
+  return Math.abs(hash) % length
+}
+
+function getLobbyPaperClass(code: string) {
+  return PAPER_COLORS[getStableIndex(code, PAPER_COLORS.length)]
+}
+
+function getLobbyPoseClass(code: string) {
+  return PAPER_POSES[getStableIndex(`${code}-pose`, PAPER_POSES.length)]
+}
+
+function getLobbyTapeClass(code: string) {
+  const useTopStrip = getStableIndex(`${code}-tape-style`, 2) === 0
+
+  if (useTopStrip) return 'tapeTopStrip'
+
+  return CORNER_TAPE_VARIANTS[getStableIndex(`${code}-tape`, CORNER_TAPE_VARIANTS.length)]
+}
+
+function getModeIcon(mode?: string) {
+  const normalized = String(mode ?? '').toLowerCase()
+
+  if (normalized === 'turbo') return 'fa-solid fa-gauge-high'
+  if (normalized === 'coop') return 'fa-solid fa-handshake-angle'
+  if (normalized === 'ffa') return 'fa-solid fa-burst'
+  if (normalized === 'solo') return 'fa-solid fa-user-ninja'
+
+  return 'fa-solid fa-chess-knight'
+}
+
+function getModeLabel(mode?: string) {
+  const normalized = String(mode ?? 'standard').toLowerCase()
+
+  if (normalized === 'ffa') return 'FFA'
+  if (normalized === 'coop') return 'Wspólne'
+  if (normalized === 'solo') return 'Solo'
+  if (normalized === 'turbo') return 'Turbo'
+
+  return 'Standard'
+}
+
 export default function LobbiesPage() {
   const socket = useContext(SocketContext)
   const navigate = useNavigate()
+
   const [lobbies, setLobbies] = useState<PublicLobby[]>([])
   const [joiningCode, setJoiningCode] = useState<string | null>(null)
+  const [joinError, setJoinError] = useState('')
 
-  // pobierz i subskrybuj listę publicznych lobby
+  const leaveBtnText = '← Wróć'
+
+  const onLeaveIntent = () => {
+    navigate('/')
+  }
+
   useEffect(() => {
-    const onList = (list: PublicLobby[]) => setLobbies(list ?? [])
-    socket.on("publicLobbies", onList)
-    socket.emit("getPublicLobbies")
+    const onList = (list: PublicLobby[]) => {
+      setLobbies(list ?? [])
+    }
+
+    socket.on('publicLobbies', onList)
+    socket.emit('getPublicLobbies')
+
     return () => {
-      socket.off("publicLobbies", onList)
+      socket.off('publicLobbies', onList)
     }
   }, [socket])
 
-  // dołączanie: użyj istniejącej ścieżki (getLobby -> lobbyData -> navigate)
   const joinLobby = (code: string) => {
     if (joiningCode) return
+
+    setJoinError('')
     setJoiningCode(code)
 
-    const onLobby = () => {
-      socket.off("lobbyNotFound", onNotFound)
-      socket.off("lobbyData", onLobby)
+    const timeoutId = window.setTimeout(() => {
+      socket.off('lobbyData', onLobby)
+      socket.off('lobbyNotFound', onNotFound)
       setJoiningCode(null)
-      navigate(`/lobby?code=${code}`)
-    }
-    const onNotFound = () => {
-      socket.off("lobbyData", onLobby)
-      socket.off("lobbyNotFound", onNotFound)
+      setJoinError('Przekroczono czas oczekiwania na dołączenie do lobby.')
+    }, RESPONSE_TIMEOUT_MS)
+
+    const finish = () => {
+      window.clearTimeout(timeoutId)
+      socket.off('lobbyData', onLobby)
+      socket.off('lobbyNotFound', onNotFound)
       setJoiningCode(null)
-      alert("To lobby już nie istnieje.")
     }
 
-    socket.once("lobbyData", onLobby)
-    socket.once("lobbyNotFound", onNotFound)
-    socket.emit("getLobby", { code })
+    const onLobby = () => {
+      finish()
+      navigate(`/lobby?code=${code}`)
+    }
+
+    const onNotFound = () => {
+      finish()
+      setJoinError('To lobby już nie istnieje.')
+    }
+
+    socket.once('lobbyData', onLobby)
+    socket.once('lobbyNotFound', onNotFound)
+    socket.emit('getLobby', { code })
   }
 
   const sorted = useMemo(
-    () => [...lobbies].sort((a, b) => (b.playersCount || 0) - (a.playersCount || 0)),
-    [lobbies]
+    () =>
+      [...lobbies].sort((a, b) => {
+        const aIsOpen = (a.state ?? 'lobby') === 'lobby'
+        const bIsOpen = (b.state ?? 'lobby') === 'lobby'
+
+        if (aIsOpen !== bIsOpen) return aIsOpen ? -1 : 1
+
+        return (b.playersCount || 0) - (a.playersCount || 0)
+      }),
+    [lobbies],
   )
 
   return (
-    <main style={{ minHeight: "100vh", padding: "2rem 1rem", display: "grid", gap: "1rem" }}>
-      <header style={{ display: "flex", alignItems: "baseline", gap: ".75rem", flexWrap: "wrap" }}>
-        <h2 style={{ margin: 0 }}>Publiczne lobby</h2>
-        <span style={{ opacity: .8 }}>({sorted.length})</span>
-        <button onClick={() => socket.emit("getPublicLobbies")} style={{ marginLeft: "auto" }}>
-          Odśwież
-        </button>
-      </header>
-
-      {sorted.length === 0 ? (
-        <p>Brak otwartych gier.</p>
-      ) : (
-        <ul
-          style={{
-            listStyle: "none",
-            padding: 0,
-            margin: 0,
-            display: "grid",
-            gap: "0.75rem",
-            gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
+    <div className={`${styles.page} container`}>
+      <div className={styles.logo}>
+        <Link
+          className={styles.logoLogo}
+          to="/"
+          onClick={(e) => {
+            e.preventDefault()
+            onLeaveIntent()
           }}
         >
-          {sorted.map((lobby) => (
-            <li key={lobby.code}>
-              <div className="lobbyCard fade" style={{ width: "100%", textAlign: "left" }}>
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: ".75rem" }}>
-                  <strong className="lobbyName">{lobby.name || "Lobby"}</strong>
-                  <button
-                    onClick={() => joinLobby(lobby.code)}
-                    disabled={joiningCode === lobby.code}
-                    aria-busy={joiningCode === lobby.code || undefined}
-                  >
-                    {joiningCode === lobby.code ? "Dołączanie…" : "Dołącz"}
-                  </button>
-                </div>
+          ZGADNIJ&nbsp;<span>KOD</span>
+        </Link>
 
-                <div className="lobbyMeta" style={{ marginTop: ".5rem" }}>
-                  <span className="meta-code">
-                    <i className="fa-solid fa-key" />
-                    {lobby.code}
-                  </span>
-                  <span className="meta-players">
-                    <i className="fa-solid fa-user-group" />
-                    {lobby.playersCount}
-                  </span>
-                  <span className="meta-mode">
-                    <i className="fa-solid fa-gamepad" />
-                    {lobby.mode ?? "standard"}
-                  </span>
-                  <span className="meta-len">
-                    <i className="fa-solid fa-hashtag" />
-                    {String(lobby.len ?? "4")}
-                  </span>
-                </div>
-              </div>
-            </li>
-          ))}
-        </ul>
-      )}
-    </main>
+        <button
+          type="button"
+          className={styles.leaveBtn}
+          onClick={onLeaveIntent}
+          title="Opuść listę lobby"
+        >
+          {leaveBtnText}
+        </button>
+      </div>
+
+      <main className={styles.content}>
+        <header className={styles.header}>
+          <p className={styles.eyebrow}>Otwarte gry</p>
+          <h1>Publiczne lobby</h1>
+          <p className={styles.subtitle}>
+            Wybierz karteczkę z lobby i dołącz do gry.
+          </p>
+
+          <div className={styles.headerActions}>
+
+            <button
+              type="button"
+              className={`${styles.btn} ${styles.blue}`}
+              onClick={() => {
+                socket.emit('getPublicLobbies')
+              }}
+            >
+              Odśwież
+            </button>
+          </div>
+        </header>
+
+        {joinError && (
+          <p className={styles.error} role="alert">
+            {joinError}
+          </p>
+        )}
+
+        {sorted.length === 0 ? (
+          <section className={`${styles.emptyPaper} ${styles.paperBlue} ${styles.poseA}`}>
+            <div className={styles.tapeSection} />
+
+            <h2>Brak otwartych gier</h2>
+            <p>Aktualnie nikt nie ma publicznego lobby. Spróbuj odświeżyć listę.</p>
+
+            <button
+              type="button"
+              className={`${styles.btn} ${styles.green}`}
+              onClick={() => {
+                socket.emit('getPublicLobbies')
+              }}
+            >
+              Odśwież listę
+            </button>
+
+            <div className={styles.tapeSection} />
+          </section>
+        ) : (
+          <ul className={styles.lobbyGrid}>
+            {sorted.map((lobby) => {
+              const colorClass = getLobbyPaperClass(lobby.code)
+              const poseClass = getLobbyPoseClass(lobby.code)
+              const tapeClass = getLobbyTapeClass(lobby.code)
+              const isJoining = joiningCode === lobby.code
+              const isOpen = (lobby.state ?? 'lobby') === 'lobby'
+
+              return (
+                <li key={lobby.code} className={styles.lobbyItem}>
+                  <article className={`${styles.paper} ${styles[colorClass]} ${styles[poseClass]} ${styles[tapeClass]}`}>
+                    <div className={styles.tapeSection} />
+
+                    <div className={styles.paperTop}>
+                      <div className={styles.lobbyTitle}>
+                        <b title={lobby.name || 'NOWE LOBBY'}>
+                          {lobby.name || 'NOWE LOBBY'}
+                        </b>
+                      </div>
+
+                      <button
+                        type="button"
+                        className={styles.joinBtn}
+                        onClick={() => {
+                          joinLobby(lobby.code)
+                        }}
+                        disabled={!isOpen || isJoining}
+                        aria-busy={isJoining || undefined}
+                      >
+                        {isJoining ? 'Dołączanie…' : isOpen ? 'Dołącz' : 'Zajęte'}
+                      </button>
+                    </div>
+
+                    <div className={styles.lobbyDetails}>
+                      <div className={styles.lobbyCodeValue}>
+                        {lobby.code}
+                      </div>
+
+                      <div className={styles.lobbyMeta}>
+                        <span>
+                          <i className="fa-solid fa-user-group" aria-hidden="true" />
+                          {lobby.playersCount}/{lobby.maxPlayers ?? 4}
+                        </span>
+
+                        <span>
+                          <i className={getModeIcon(lobby.mode)} aria-hidden="true" />
+                          {getModeLabel(lobby.mode)}
+                        </span>
+
+                        <span>
+                          <i className="fa-solid fa-hashtag" aria-hidden="true" />
+                          {String(lobby.len ?? '4')}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className={styles.tapeSection} />
+                  </article>
+                </li>
+              )
+            })}
+          </ul>
+        )}
+
+        <SiteFooter />
+      </main>
+    </div>
   )
 }
