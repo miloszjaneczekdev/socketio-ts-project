@@ -524,6 +524,12 @@ export default function Summary() {
     : [];
 
   const podium = orderedSummary;
+  const historyPlayers = orderedSummary;
+  const historyMode = String(meta.mode ?? '').toLowerCase();
+  const historySelectorLabel =
+    historyMode === 'ffa' || historyMode === 'coop'
+      ? 'Wybierz historię gracza'
+      : 'Wybierz gracza';
 
   const handleCreateLobby = () => {
     if (isCreatingLobby) return;
@@ -684,9 +690,37 @@ export default function Summary() {
 
               <section className={`${styles.card} ${styles.result}`}>
                 <h2>Historia strzałów</h2>
+
+                {historyPlayers.length > 1 && (
+                  <div className={styles.historySelector} aria-label={historySelectorLabel}>
+                    {historyPlayers.map((row) => {
+                      const isHistorySelected = selectedPlayer?.playerId === row.playerId;
+
+                      return (
+                        <button
+                          key={row.playerId}
+                          type="button"
+                          className={`${styles.historyTab} ${isHistorySelected ? styles.historyTabSelected : ''}`}
+                          onClick={() => {
+                            setSelectedPlayerId(row.playerId);
+                          }}
+                        >
+                          <img
+                            className={styles.historyTabAvatar}
+                            src={row.avatar || DEFAULT_AVATAR}
+                            alt=""
+                            aria-hidden="true"
+                          />
+                          <span>{row.name}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+
                 {selectedPlayer && (
                   <div className={styles.inlineShotPanel} aria-live="polite">
-                    <h3>{selectedPlayer.name}</h3>
+                    <h3>Strzały: {selectedPlayer.name}</h3>
 
                     {shotHistoryItems.length ? (
                       <div className={styles.summaryShotHistory}>

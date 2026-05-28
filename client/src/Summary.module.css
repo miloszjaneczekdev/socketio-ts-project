@@ -163,6 +163,83 @@
   overflow: hidden;
 }
 
+.historySelector {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  min-width: 0;
+  margin: -2px 0 4px;
+}
+
+.historyTab {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  min-width: 0;
+  max-width: 100%;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 8px;
+  border: 2px solid var(--clr-border);
+  border-radius: 999px;
+  background: transparent;
+  box-shadow: 2px 2px 0 var(--box-shadow);
+  color: var(--clr-border);
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.1s ease, filter 0.1s ease;
+}
+
+.historyTab::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image:
+    repeating-linear-gradient(135deg, var(--grey-marker4) 0 10px, transparent 10px 20px),
+    repeating-linear-gradient(145deg, var(--grey-marker3) 0 12px, transparent 12px 24px);
+}
+
+.historyTabSelected::before {
+  background-image:
+    repeating-linear-gradient(135deg, var(--green-marker4) 0 10px, transparent 10px 20px),
+    repeating-linear-gradient(145deg, var(--green-marker3) 0 12px, transparent 12px 24px);
+}
+
+.historyTab:hover,
+.historyTab:focus-visible {
+  transform: translateY(-1px);
+  filter: saturate(1.1);
+}
+
+.historyTab:active {
+  transform: translate(2px, 2px);
+  box-shadow: none;
+}
+
+.historyTab span {
+  min-width: 0;
+  max-width: 96px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.historyTabAvatar {
+  width: 26px;
+  height: 26px;
+  flex: 0 0 auto;
+  border: 2px solid var(--clr-border);
+  border-radius: 9px;
+  object-fit: cover;
+  background: var(--clr-paper);
+}
+
 .history {
   grid-area: history;
 }
@@ -901,7 +978,8 @@
 @media (prefers-reduced-motion: reduce) {
   .timeBtn,
   .btn,
-  .place {
+  .place,
+  .historyTab {
     transition: none;
   }
 }
