@@ -1,5 +1,5 @@
 .lobbyMeta i {
-    margin-right: 6px;
+    margin-right: calc(6px * var(--rotator-scale, 1));
 }
 
 /* FADE */
@@ -13,43 +13,56 @@
 }
 
 .lobbies {
+    --rotator-scale: 1;
     position: absolute;
-    top: clamp(220px, 39vh, 450px);
-    left: clamp(16px, 7vw, 100px);
-    transform: rotate(-10deg);
-    width: min(300px, calc(100vw - 32px));
-    min-height: 150px;
-    padding: 0.75rem;
+    top: 65%;
+    left: clamp(
+        calc(16px * var(--rotator-scale)),
+        calc(7vw * var(--rotator-scale)),
+        calc(100px * var(--rotator-scale))
+    );
+    transform: translateY(-50%) rotate(-10deg);
+    width: min(calc(300px * var(--rotator-scale)), calc(100vw - (32px * var(--rotator-scale))));
+    min-height: calc(150px * var(--rotator-scale));
+    padding: calc(0.75rem * var(--rotator-scale));
     /* --paper-color: var(--pink); --paper-dark: var(--pink-dark); --shadow-size: 2px; --transparent: rgba(236, 178, 186, 0); */
     --paper-color: #d5e0f9;
     --paper-dark: #a7bee9;
-    --shadow-size: 3px;
+    --shadow-size: calc(3px * var(--rotator-scale));
     --transparent: rgba(213, 224, 249, 0);
-    border: var(--paper-dark) 2px solid;
+    border: var(--paper-dark) calc(2px * var(--rotator-scale)) solid;
     background: linear-gradient(to bottom right, var(--paper-dark), 20%, var(--transparent)), var(--paper-color);
     display: flex;
     flex-direction: column;
     justify-content: space-around;
-    box-shadow: var(--shadow-size) var(--shadow-size) 2px var(--paper-dark);
+    box-shadow: var(--shadow-size) var(--shadow-size) calc(2px * var(--rotator-scale)) var(--paper-dark);
     text-align: center;
 }
 
 .lobbies h3 {
     font-weight: 900;
-    font-size: clamp(18px, 4vw, 22px);
+    font-size: clamp(
+        calc(18px * var(--rotator-scale)),
+        calc(4vw * var(--rotator-scale)),
+        calc(22px * var(--rotator-scale))
+    );
 }
 
 .lobbies a {
     color: var(--clr-border);
-    font-size: clamp(13px, 3vw, 16px);
+    font-size: clamp(
+        calc(13px * var(--rotator-scale)),
+        calc(3vw * var(--rotator-scale)),
+        calc(16px * var(--rotator-scale))
+    );
 }
 
 .lobbyMeta {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 0.25rem 0.6rem;
-    padding: 0 0.35rem;
+    gap: calc(0.25rem * var(--rotator-scale)) calc(0.6rem * var(--rotator-scale));
+    padding: 0 calc(0.35rem * var(--rotator-scale));
 }
 
 .lobbyName {
@@ -74,12 +87,12 @@
 
 .topTape {
     position: absolute;
-    height: 4vmin;
-    top: -5px;
+    height: calc(4vmin * var(--rotator-scale));
+    top: calc(-5px * var(--rotator-scale));
     width: 110%;
     background-color: var(--tape-gray);
-    border-right: 1px dotted var(--tape-edge-gray);
-    border-left: 1px dotted var(--tape-edge-gray);
+    border-right: calc(1px * var(--rotator-scale)) dotted var(--tape-edge-gray);
+    border-left: calc(1px * var(--rotator-scale)) dotted var(--tape-edge-gray);
     opacity: 0.5;
 }
 
@@ -94,58 +107,72 @@
 .tapeSection::before,
 .tapeSection::after {
     content: "";
-    width: 80px;
-    height: 32px;
+    width: calc(80px * var(--rotator-scale));
+    height: calc(32px * var(--rotator-scale));
     position: absolute;
     background-color: var(--tape-gray);
     opacity: 0.5;
-    border-right: 1px dotted var(--tape-edge-gray);
-    border-left: 1px dotted var(--tape-edge-gray);
+    border-right: calc(1px * var(--rotator-scale)) dotted var(--tape-edge-gray);
+    border-left: calc(1px * var(--rotator-scale)) dotted var(--tape-edge-gray);
 }
 
 .tapeSection:last-of-type::after {
     transform: rotate(-45deg);
-    right: -4vmin;
-    top: -3vmin;
+    right: calc(-4vmin * var(--rotator-scale));
+    top: calc(-3vmin * var(--rotator-scale));
 }
 
 .tapeSection:first-of-type::before {
     transform: rotate(-45deg);
-    left: -4vmin;
+    left: calc(-4vmin * var(--rotator-scale));
 }
 
 .tapeSection:first-of-type::after {
     transform: rotate(45deg);
-    right: -4vmin;
+    right: calc(-4vmin * var(--rotator-scale));
     top: 0;
 }
 
 .tapeSection:last-of-type::before {
     transform: rotate(45deg);
-    left: -4vmin;
+    left: calc(-4vmin * var(--rotator-scale));
     bottom: 0;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1260px) {
     .lobbies {
+        --rotator-scale: 0.9;
+    }
+}
+
+@media (max-width: 1120px) {
+    .lobbies {
+        --rotator-scale: 0.86;
+    }
+}
+
+@media (max-width: 1050px) {
+    .lobbies {
+        --rotator-scale: 0.84;
         position: static;
         transform: rotate(-2deg);
-        width: min(100%, 340px);
+        width: min(100%, calc(340px * var(--rotator-scale)));
         margin: 0 auto;
     }
 }
 
 @media (max-width: 520px) {
     .lobbies {
+        --rotator-scale: 0.78;
         width: 100%;
-        min-height: 132px;
-        padding: 0.65rem;
+        min-height: calc(132px * var(--rotator-scale));
+        padding: calc(0.65rem * var(--rotator-scale));
         transform: rotate(0deg);
     }
 
     .tapeSection::before,
     .tapeSection::after {
-        width: 58px;
-        height: 24px;
+        width: calc(58px * var(--rotator-scale));
+        height: calc(24px * var(--rotator-scale));
     }
 }

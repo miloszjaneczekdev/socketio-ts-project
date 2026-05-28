@@ -139,26 +139,18 @@ const modeDemos = [
       {
         id: 'turbo-1',
         imageSrc: '/how-to-play/turbo-1.png',
-        imageAlt: 'Tryb Turbo: gracze ustawiają kody równocześnie',
+        imageAlt: 'Tryb Turbo: szybkie tempo i krótki czas na decyzję',
         durationMs: 5000,
-        title: 'W Turbo wszyscy ustawiają kody równocześnie.',
-        desc: 'Jeśli każdy ustawi kod przed końcem czasu, gra nie czeka i od razu startuje rundę.',
+        title: 'W Turbo liczy się tempo.',
+        desc: 'Rozgrywka jest szybsza niż w trybie standardowym. Masz mniej czasu na analizę, więc trzeba szybko podejmować decyzje i sprawnie wpisywać próby.',
       },
       {
         id: 'turbo-2',
         imageSrc: '/how-to-play/turbo-2.png',
-        imageAlt: 'Tryb Turbo: wielu graczy zgaduje w tym samym czasie',
+        imageAlt: 'Tryb Turbo: wszyscy gracze zgadują równocześnie',
         durationMs: 5000,
-        title: 'Wszyscy zgadują w tym samym czasie.',
-        desc: 'Nie ma klasycznej kolejki. Liczy się tempo, refleks i szybkie analizowanie podpowiedzi.',
-      },
-      {
-        id: 'turbo-3',
-        imageSrc: '/how-to-play/turbo-3.png',
-        imageAlt: 'Tryb Turbo: runda kończy się po strzałach wszystkich graczy',
-        durationMs: 5000,
-        title: 'Runda kończy się, gdy wszyscy oddadzą strzał.',
-        desc: 'Jeśli ktoś nie zdąży, gra może wykonać za niego pusty albo losowy strzał.',
+        title: 'Wszyscy zgadują równocześnie.',
+        desc: 'Nie ma klasycznej kolejki. Każdy gracz oddaje strzał w tym samym czasie, więc nikt nie czeka na swoją turę.',
       },
     ],
   },
@@ -577,9 +569,8 @@ function HowToPlay() {
                 <div className={`${styles.startLeft} ${startDemoHidden ? styles.startDemoHidden : ''}`}>
                   <button
                     type="button"
-                    className={`${styles.demoBtn} ${styles.greenBtn} ${
-                      startDemoAction === 'create' ? styles.demoBtnPressed : ''
-                    } ${startDemoFocus === 'create' ? styles.demoFocus : ''}`}
+                    className={`${styles.demoBtn} ${styles.greenBtn} ${startDemoAction === 'create' ? styles.demoBtnPressed : ''
+                      } ${startDemoFocus === 'create' ? styles.demoFocus : ''}`}
                   >
                     Stwórz lobby
                   </button>
@@ -588,9 +579,8 @@ function HowToPlay() {
                     {startDemoCode.slice(0, 3).map((char, index) => (
                       <span
                         key={`start-code-left-${index}`}
-                        className={`${char ? styles.codeFilled : ''} ${
-                          startDemoFocus === index ? styles.demoFocus : ''
-                        }`}
+                        className={`${char ? styles.codeFilled : ''} ${startDemoFocus === index ? styles.demoFocus : ''
+                          }`}
                       >
                         {char || ' '}
                       </span>
@@ -601,9 +591,8 @@ function HowToPlay() {
                     {startDemoCode.slice(3).map((char, index) => (
                       <span
                         key={`start-code-right-${index}`}
-                        className={`${char ? styles.codeFilled : ''} ${
-                          startDemoFocus === index + 3 ? styles.demoFocus : ''
-                        }`}
+                        className={`${char ? styles.codeFilled : ''} ${startDemoFocus === index + 3 ? styles.demoFocus : ''
+                          }`}
                       >
                         {char || ' '}
                       </span>
@@ -612,9 +601,8 @@ function HowToPlay() {
 
                   <button
                     type="button"
-                    className={`${styles.demoBtn} ${styles.blueBtn} ${
-                      startDemoAction === 'join' ? styles.demoBtnPressed : ''
-                    } ${startDemoFocus === 'join' ? styles.demoFocus : ''}`}
+                    className={`${styles.demoBtn} ${styles.blueBtn} ${startDemoAction === 'join' ? styles.demoBtnPressed : ''
+                      } ${startDemoFocus === 'join' ? styles.demoFocus : ''}`}
                   >
                     Dołącz do lobby
                   </button>

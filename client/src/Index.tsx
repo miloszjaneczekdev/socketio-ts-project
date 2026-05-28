@@ -268,10 +268,6 @@ function Index() {
 
     return (
         <div className={`${styles.container} container`}>
-            <div className={styles.lobbyPreview}>
-                <LobbyRotator intervalMs={5000} />
-            </div>
-
             <main id="main" className={styles.main}>
                 <h1 className={styles.logo}>
                     ZGADNIJ <span>KOD</span>
@@ -354,6 +350,10 @@ function Index() {
                         {isJoining ? 'Dołączanie...' : 'Dołącz do lobby'}
                     </button>
                 </form>
+
+                <div className={styles.lobbyPreview}>
+                    <LobbyRotator intervalMs={5000} />
+                </div>
             </main>
 
             <nav className={styles.bottom} aria-label="Linki pomocnicze">
