@@ -88,12 +88,9 @@ html,
 body {
     height: 100%;
     width: 100%;
+    overflow-x: hidden;
     font-family: "Gloria Hallelujah", cursive;
-    background:
-        repeating-linear-gradient(to bottom,
-            var(--clr-paper) 0 28px,
-            var(--clr-lines) 29px 30px),
-        var(--clr-paper);
+    background: var(--clr-paper);
 }
 
 #root {
@@ -101,6 +98,11 @@ body {
     flex-direction: column;
     min-height: 100vh;
     border: 3px solid var(--clr-border);
+    background:
+        repeating-linear-gradient(to bottom,
+            var(--clr-paper) 0 28px,
+            var(--clr-lines) 29px 30px),
+        var(--clr-paper);
 }
 
 .container {

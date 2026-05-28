@@ -229,16 +229,6 @@ export default function LobbiesPage() {
             <h2>Brak otwartych gier</h2>
             <p>Aktualnie nikt nie ma publicznego lobby. Spróbuj odświeżyć listę.</p>
 
-            <button
-              type="button"
-              className={`${styles.btn} ${styles.green}`}
-              onClick={() => {
-                socket.emit('getPublicLobbies')
-              }}
-            >
-              Odśwież listę
-            </button>
-
             <div className={styles.tapeSection} />
           </section>
         ) : (
@@ -306,7 +296,9 @@ export default function LobbiesPage() {
           </ul>
         )}
 
-        <SiteFooter />
+        <div className={styles.footerSlot}>
+          <SiteFooter />
+        </div>
       </main>
     </div>
   )

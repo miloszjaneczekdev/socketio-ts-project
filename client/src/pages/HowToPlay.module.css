@@ -58,7 +58,7 @@
 .content {
   width: min(980px, calc(100% - 2rem));
   margin: 0 auto;
-  padding: clamp(5rem, 8vw, 7rem) 0 2rem;
+  padding: clamp(5rem, 8vw, 7rem) 0 0;
 }
 
 .topRow {

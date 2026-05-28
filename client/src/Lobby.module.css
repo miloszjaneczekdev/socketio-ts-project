@@ -1,4 +1,4 @@
-:root {
+.container {
     --scale-note: 1;
     --clr-border: #111827;
     --clr-note: #fff8d6;
@@ -6,10 +6,9 @@
 
     --badgeA: #ef4444;
     --badgeB: #f43f5e;
-}
 
 
-.container {
+
     width: 100%;
     height: 100%;
     flex: 1;
@@ -197,12 +196,12 @@
 }
 
 /* Hide original radio buttons */
-input[type="radio"] {
+.container input[type="radio"] {
     display: none;
 }
 
 /* X mark when checked */
-input[type="radio"]:checked+.customCheckbox::before {
+.container input[type="radio"]:checked+.customCheckbox::before {
     content: "X";
     position: absolute;
     top: -50%;

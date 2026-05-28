@@ -1,4 +1,4 @@
-:root {
+.scroll {
   --clr-paper: #fefdf8;
   --clr-lines: #dedede;
   --clr-border: #444;
@@ -9,11 +9,10 @@
   --gap: 20px;
   --shadow-off-x: 3px;
   --shadow-off-y: 3px;
-}
+
 
 /* Kontener z własnym scrollowaniem i izolacją z-indexów */
 /* StickyStack.module.css */
-.scroll {
   position: relative;
   isolation: isolate;
   overflow-y: auto;

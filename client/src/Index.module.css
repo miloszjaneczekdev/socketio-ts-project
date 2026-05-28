@@ -1,8 +1,5 @@
-:root {
-  --scale: 1;
-}
-
 .container {
+  --scale: 1;
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -12,7 +9,7 @@
 }
 
 
-main {
+.main {
   display: flex;
   text-align: center;
   flex-direction: column;
@@ -183,17 +180,17 @@ main {
   font-size: 1rem;
 }
 
-footer {
+.footer {
   font-size: 1rem;
   margin-bottom: 1rem;
 }
 
-footer a {
+.footer a {
   color: var(--green-marker5);
   text-decoration: underline;
 }
 
-a:focus {
+.container a:focus {
   outline: .125rem solid #ffcc00;
   /* mocny kontrast */
   outline-offset: .5rem;
@@ -226,14 +223,14 @@ a:focus {
 }
 
 @media (max-width: 1000px) {
-  :root {
+  .container {
     --scale: 0.9;
   }
 }
 
 
 @media (max-width: 750px) {
-  :root {
+  .container {
     --scale: 0.8;
   }
 
@@ -247,7 +244,7 @@ a:focus {
 }
 
 @media (max-width: 350px) {
-  :root {
+  .container {
     --scale: 0.7;
   }
 }
@@ -359,7 +356,7 @@ a:focus {
 }
 
 
-fieldset {
+.codeBox {
   outline: none;
   border: none;
 }

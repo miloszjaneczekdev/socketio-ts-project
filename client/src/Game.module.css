@@ -1,4 +1,4 @@
-:root {
+.container {
   --scale-center: 1;
 
   /* STACKING CARDS – konfiguracja */
@@ -8,7 +8,12 @@
 }
 
 /* opcjonalnie, stabilny box-model */
-*, *::before, *::after { box-sizing: border-box; }
+.container,
+.container *,
+.container *::before,
+.container *::after {
+  box-sizing: border-box;
+}
 
 .container {
   display: flex;
