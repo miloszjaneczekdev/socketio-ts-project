@@ -1,0 +1,94 @@
+.wrapper {
+  display: grid;
+  gap: 12px;
+  padding: 100px;
+  overflow: visible; /* nic nie będzie przycinane */
+}
+
+.card {
+  position: relative;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: white;
+  transition: box-shadow 120ms ease, transform 120ms ease;
+  z-index: 0;        /* jawnie pod badge/koroną */
+  overflow: visible; /* bez przycinania */
+}
+
+.cardHover {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, .35);
+}
+
+/* ---------- Korona (lewy górny róg) ---------- */
+.crown {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  font-size: 18px;
+  line-height: 1;
+  cursor: grab;
+  user-select: none;
+  z-index: 3;              /* nad kartą i placeholderem */
+  -webkit-user-drag: none;
+}
+
+.crownDragging {
+  opacity: 0.9;
+  cursor: grabbing;
+  pointer-events: none;    /* overlay przejmuje interakcje */
+  z-index: 10000;          /* najwyżej podczas drag */
+  transform: translateZ(0);
+}
+
+/* ---------- Badge (prawy górny róg) ---------- */
+.badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 38px;
+  height: 38px;
+  border-radius: 999px;
+  border: 2px solid #334155;
+  display: grid;
+  place-items: center;
+  font-weight: 600;
+  user-select: none;
+  cursor: grab;
+  background: #f8fafc;
+  z-index: 2;                 /* ponad kartą i placeholderem */
+  will-change: transform;     /* płynniejsza animacja */
+}
+
+.badgeSorting {
+  z-index: 5;                 /* auto-animowane elementy są nad kartami */
+  pointer-events: none;
+  transform: translateZ(0);   /* nowa warstwa kompozycji */
+}
+
+.badgeDragging {
+  opacity: 0.5;
+  cursor: grabbing;
+  pointer-events: none;       /* overlay przejmuje interakcje */
+  z-index: 9999;              /* zawsze na wierzchu podczas drag */
+}
+
+/* ---------- Placeholder (pod badge) ---------- */
+.placeholder {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 38px;
+  height: 38px;
+  border-radius: 999px;
+  border: 2px dashed #cbd5e1;
+  z-index: 1;                 /* pod .badge */
+}
+
+/* ---------- Ukrywanie badge w miejscu startu ---------- */
+.hidden {
+  visibility: hidden;
+}

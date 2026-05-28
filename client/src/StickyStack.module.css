@@ -1,0 +1,101 @@
+:root {
+  --clr-paper: #fefdf8;
+  --clr-lines: #dedede;
+  --clr-border: #444;
+
+  --clr-note-stack: #d5e0f9;
+  --clr-note-border-stack: #a7bee9;
+
+  --gap: 20px;
+  --shadow-off-x: 3px;
+  --shadow-off-y: 3px;
+}
+
+/* Kontener z własnym scrollowaniem i izolacją z-indexów */
+/* StickyStack.module.css */
+.scroll {
+  position: relative;
+  isolation: isolate;
+  overflow-y: auto;
+
+  max-height: 100%;
+
+  padding: 25px;
+  display: flex;
+  align-items: center;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--gap);
+}
+
+
+/* Pojedyncza „karteczka” */
+.item {
+  position: sticky;
+  top: auto;
+  bottom: auto;
+
+  width: 225px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+
+  border: var(--clr-note-border-stack) 2px solid;
+  background:
+    linear-gradient(to bottom right, var(--clr-note-border-stack) 20%, rgba(255, 255, 255, 0)),
+    var(--clr-note-stack);
+
+  box-shadow:
+    var(--shadow-off-x) var(--shadow-off-y) var(--shadowB, 0px) var(--shadowS, 0px) rgba(0, 0, 0, var(--shadowA, 0));
+
+  transform: rotate(var(--rot, 0deg));
+  transition: transform .2s ease, opacity .2s ease, filter .2s ease, box-shadow .2s ease;
+  will-change: transform, opacity, box-shadow;
+  z-index: var(data-sticky-idx);
+}
+
+.itemBody {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  font-size: 20px;
+}
+
+.itemBody strong {
+  font-size: 2rem;
+  height: min-content;
+}
+
+.badge,
+.meta {
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  opacity: .65;
+}
+
+.stickTop {
+  top: 0;
+  bottom: auto;
+}
+
+.stickBottom {
+  bottom: 0;
+  top: auto;
+}
+
+/*
+.item::after {
+  content: attr(data-sticky-group) " #" attr(data-sticky-idx);
+  position: absolute;
+  top: 4px;
+  left: 8px;
+  font-size: 10px;
+  background: rgba(0,0,0,0.4);
+  color: #fff;
+  padding: 2px 4px;
+  border-radius: 4px;
+}
+*/

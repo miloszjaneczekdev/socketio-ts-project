@@ -1,0 +1,365 @@
+:root {
+  --scale: 1;
+}
+
+.container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--clr-border);
+}
+
+
+main {
+  display: flex;
+  text-align: center;
+  flex-direction: column;
+  gap: clamp(0.5rem, 1vw, 10rem);
+  flex-grow: 1;
+  justify-content: center;
+}
+
+
+.logo {
+  font-size: clamp(2.5rem, 7vw, 9rem);
+  color: var(--clr-border);
+  letter-spacing: .05em;
+  text-align: center;
+}
+
+.logo span {
+  color: var(--green-marker5)
+}
+
+.slogan {
+  font-size: clamp(1rem, 1.5vw, 5rem);
+  color: var(--clr-border);
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: calc(0.75rem*var(--scale));
+}
+
+.actions .error {
+  font-size: clamp(1rem, 1.5vw, 5rem);
+}
+
+.actions .btn {
+  width: calc(23rem*var(--scale));
+  height: calc(4.5rem*var(--scale));
+  font-family: "Gloria Hallelujah", cursive;
+  background: transparent;
+  border-radius: calc(0.75rem*var(--scale));
+  font-size: calc(1.5rem*var(--scale));
+  box-shadow: calc(0.125rem*var(--scale)) calc(0.125rem*var(--scale)) 0 var(--box-shadow);
+  border: calc(0.1rem*var(--scale)) solid var(--clr-border);
+  transition: all .1s ease;
+  color: var(--clr-border);
+  outline: none;
+  position: relative;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.actions .btn:focus-visible {
+  outline: .125rem solid #ffcc00;
+  /* mocny kontrast */
+  outline-offset: .5rem;
+}
+
+.actions .btn:active {
+  transform: translate(calc(0.125rem*var(--scale)), calc(0.125rem*var(--scale)));
+  box-shadow: none;
+}
+
+.actions .btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: -1;
+  opacity: 1;
+  background-size: cover;
+}
+
+/* Wzory tła */
+.green::before {
+  background-image:
+    repeating-linear-gradient(135deg, var(--green-marker4) 0 10px, transparent 10px 20px),
+    repeating-linear-gradient(145deg, var(--green-marker3) 0 12px, transparent 12px 24px);
+}
+
+.blue::before {
+  background-image:
+    repeating-linear-gradient(135deg, var(--blue-marker4) 0 10px, transparent 10px 20px),
+    repeating-linear-gradient(145deg, var(--blue-marker3) 0 12px, transparent 12px 24px);
+}
+
+
+.codeBox {
+  display: flex;
+  gap: calc(0.5rem*var(--scale));
+}
+
+.codeBox span {
+  width: calc(2rem*var(--scale));
+  height: calc(4.5rem*var(--scale));
+  font-size: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.codeBox input {
+  width: calc(3rem*var(--scale));
+  height: calc(4.5rem*var(--scale));
+  text-align: center;
+  background: transparent;
+  border-radius: calc(0.75rem*var(--scale));
+  font-family: "Gloria Hallelujah", cursive;
+  font-size: calc(1.5rem*var(--scale));
+  box-shadow: calc(0.125rem*var(--scale)) calc(0.125rem*var(--scale)) 0 var(--box-shadow);
+  outline: none;
+  border: calc(0.1rem*var(--scale)) solid var(--clr-border);
+  transition: all .1s ease;
+  outline: none;
+}
+
+.codeBox input:focus-visible {
+  transform: translate(calc(0.125rem*var(--scale)), calc(0.125rem*var(--scale)));
+  box-shadow: none;
+  outline: .125rem solid #ffcc00;
+  /* mocny kontrast */
+  outline-offset: .5rem;
+}
+
+
+.codeBox input:active {
+  transform: translate(calc(0.125rem*var(--scale)), calc(0.125rem*var(--scale)));
+  box-shadow: none;
+}
+
+
+.codeBox input.filled {
+  background-image: repeating-linear-gradient(135deg, var(--blue-marker4) 0 10px, transparent 10px 20px),
+    repeating-linear-gradient(145deg, var(--blue-marker3) 0 12px, transparent 12px 24px);
+}
+
+.codeBox input.error {
+  background-image: repeating-linear-gradient(135deg, var(--red-marker4) 0 10px, transparent 10px 20px),
+    repeating-linear-gradient(145deg, var(--red-marker3) 0 12px, transparent 12px 24px);
+}
+
+.bottom {
+  text-align: center;
+  font-size: 0.8rem;
+  display: flex;
+  flex-direction: column;
+  transition: all .1s ease;
+}
+
+.navLinks {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  list-style: none;
+}
+
+
+.navLinks a {
+  color: var(--clr-border);
+  font-size: 1rem;
+}
+
+footer {
+  font-size: 1rem;
+  margin-bottom: 1rem;
+}
+
+footer a {
+  color: var(--green-marker5);
+  text-decoration: underline;
+}
+
+a:focus {
+  outline: .125rem solid #ffcc00;
+  /* mocny kontrast */
+  outline-offset: .5rem;
+  /* odstęp od tekstu */
+  border-radius: 40%;
+}
+
+@keyframes shake {
+
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  25% {
+    transform: translateX(-5px);
+  }
+
+  50% {
+    transform: translateX(5px);
+  }
+
+  75% {
+    transform: translateX(-5px);
+  }
+}
+
+.codeBox.shake {
+  animation: shake 0.3s ease-in-out;
+}
+
+@media (max-width: 1000px) {
+  :root {
+    --scale: 0.9;
+  }
+}
+
+
+@media (max-width: 750px) {
+  :root {
+    --scale: 0.8;
+  }
+
+  .bottom {
+    font-size: 0.6rem;
+  }
+
+  .navLinks a {
+    font-size: 0.7rem;
+  }
+}
+
+@media (max-width: 350px) {
+  :root {
+    --scale: 0.7;
+  }
+}
+
+
+
+
+
+.publicLobbies {
+  position: absolute;
+  width: 320px;
+  /* żeby sekcja nie była zbyt szeroka */
+  margin: 2rem 0 0 2rem;
+  /* odstęp od góry i lewej strony */
+  padding: 1rem;
+  background: #fffef8;
+  border: 2px solid #000;
+  border-radius: 12px;
+  box-shadow: 4px 4px 0 #000;
+  /* taki „rysowany” efekt */
+  font-family: "Comic Sans MS", "Patrick Hand", cursive;
+  /* pasująca czcionka */
+  line-height: 1.5;
+}
+
+.publicHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+  border-bottom: 2px dashed #444;
+  padding-bottom: 0.5rem;
+}
+
+.publicMeta {
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.refreshBtn {
+  background: transparent;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.refreshBtn:hover {
+  transform: rotate(90deg);
+}
+
+.publicList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.publicItem {
+  background: #fdfdfd;
+  border: 2px solid #000;
+  border-radius: 8px;
+  margin-bottom: 0.75rem;
+  padding: 0.75rem;
+  box-shadow: 2px 2px 0 #000;
+}
+
+.publicMain {
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+  margin-bottom: 0.25rem;
+}
+
+.publicDetails {
+  font-size: 0.85rem;
+  color: #444;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.badge {
+  background: #ffe082;
+  border: 1px solid #000;
+  border-radius: 6px;
+  padding: 0 0.25rem;
+  font-size: 0.8rem;
+}
+
+.publicActions {
+  margin-top: 0.5rem;
+  text-align: right;
+}
+
+.publicJoinBtn {
+  background: #c8f7c5;
+  border: 2px solid #000;
+  border-radius: 8px;
+  padding: 0.25rem 0.75rem;
+  cursor: pointer;
+  box-shadow: 2px 2px 0 #000;
+  transition: transform 0.1s ease;
+}
+
+.publicJoinBtn:hover {
+  transform: translateY(-2px);
+}
+
+
+fieldset {
+  outline: none;
+  border: none;
+}

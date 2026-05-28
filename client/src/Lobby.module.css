@@ -1,0 +1,714 @@
+:root {
+    --scale-note: 1;
+    --clr-border: #111827;
+    --clr-note: #fff8d6;
+    --clr-note-border: #d4b200;
+
+    --badgeA: #ef4444;
+    --badgeB: #f43f5e;
+}
+
+
+.container {
+    width: 100%;
+    height: 100%;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.logo {
+    position: fixed;
+    top: 18px;
+    left: 32px;
+    font-size: clamp(1rem, 4vw, 3rem);
+    letter-spacing: 0.03em;
+    transform: rotate(-4deg);
+    z-index: 11;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.logoLogo {
+    color: var(--clr-border);
+    text-decoration: none;
+}
+
+.logoLogo span {
+    color: var(--green-marker5);
+}
+
+.leaveBtn{
+    background-color: transparent;
+    outline: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.lobbyNote {
+    position: fixed;
+    top: 20px;
+    right: 26px;
+    width: calc(260px*var(--scale-note));
+    background: var(--clr-note);
+    border: calc(2px*var(--scale-note)) solid var(--clr-note-border);
+    /*box-shadow: calc(4px*var(--scale-note)) calc(4px*var(--scale-note)) calc(6px*var(--scale-note)) rgba(0, 0, 0, 0.15);
+           */
+    transform: rotate(2deg);
+    z-index: 12;
+    padding: calc(0.75rem*var(--scale-note));
+    transition: all .1s ease;
+
+
+    box-shadow:
+        -2px -1px 5px rgba(0, 0, 0, 0.1),
+        /* lekki cień u góry */
+        2px 6px 20px rgba(0, 0, 0, 0.25);
+    /* mocniejszy cień u dołu */
+}
+
+.lobbyNote::before {
+    content: "";
+    position: absolute;
+    top: calc(-12px*var(--scale-note));
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(16px*var(--scale-note));
+    height: calc(16px*var(--scale-note));
+    background: #a2233a;
+    border: calc(2px*var(--scale-note)) solid #821428;
+    border-radius: 50%;
+}
+
+.lobbyName {
+    width: 100%;
+    font-size: calc(1.75rem*var(--scale-note));
+    text-align: center;
+    border: none;
+    background: transparent;
+    border-radius: calc(1rem*var(--scale-note));
+    border: none;
+}
+
+.lobbyName:active {
+    outline: calc(2px*var(--scale-note)) solid var(--clr-note-border);
+}
+
+.lobbyName:focus {
+    outline: calc(2px*var(--scale-note)) solid var(--clr-note-border);
+}
+
+.countdownDisplay {
+  font-size: calc(1.75rem* var(--scale-note));
+  font-weight: bold;
+  color: var(--accent, #ffcc00);
+  text-align: center;
+  min-width: 80px;
+}
+
+.lobbyStco {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: calc(1.75rem*var(--scale-note));
+    cursor: pointer;
+}
+
+.lobbyState {
+    font-size: calc(1.75rem*var(--scale-note));
+    height: min-content;
+    outline: none;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+}
+
+.lobbyCode {
+    width: calc(11rem*var(--scale-note));
+    font-size: calc(1.75rem*var(--scale-note));
+    height: min-content;
+    outline: none;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+}
+
+.conInner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 50px;
+    margin-top: 100px;
+    padding: 50px 0;
+}
+
+.settings {
+    max-width: 400px;
+    padding: 10px;
+    border: 4px dashed black;
+    border-radius: 15px;
+    display: flex;
+    gap: 2px;
+    flex-direction: column;
+}
+
+.settingHeader {
+    background-color: rgba(6, 182, 212, 0.75);
+    padding: 0 10px;
+    font-weight: bold;
+    border-radius: 5px;
+}
+
+.options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1px;
+}
+
+.option {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    padding: 0 8px;
+    border-radius: 3px;
+    user-select: none;
+    font-size: 14px;
+}
+
+.option:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+/* Custom checkbox styling */
+.customCheckbox {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 1px solid #666;
+    margin-right: 6px;
+    position: relative;
+    cursor: pointer;
+}
+
+/* Hide original radio buttons */
+input[type="radio"] {
+    display: none;
+}
+
+/* X mark when checked */
+input[type="radio"]:checked+.customCheckbox::before {
+    content: "X";
+    position: absolute;
+    top: -50%;
+    left: 20%;
+    transform: translate(-50%, -50%);
+    transform: scale(2);
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.playersWrapper {
+    border: 4px dashed var(--clr-note-border);
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    height: min-content;
+    gap: 20px;
+    border-radius: 15px;
+    transition: height 2s linear;
+}
+
+.playerMain {
+    display: flex;
+    gap: 20px;
+    flex-direction: column;
+}
+
+.playerCon {
+    display: flex;
+    gap: 20px;
+}
+
+.playerMain img {
+    width: 120px;
+    height: 120px;
+    box-shadow: 2px 2px 0 #000;
+    border: 2px solid var(--clr-border);
+    border-radius: 1rem;
+}
+
+.imgWrapper {
+    width: 120px;
+    height: 120px;
+    position: relative;
+    border-radius: 1rem;
+
+}
+
+.title {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    font-size: .7rem;
+    color: #f0f0f0;
+    background-color: var(--clr-border);
+    border-radius: 1rem;
+    padding: 0 .4rem;
+    max-width: 108px;
+}
+
+
+.settings .disabled {
+    opacity: 0.5;
+    pointer-events: none;
+    /* blokuje klikanie */
+    position: relative;
+}
+
+/* Overlay z gradientowym tłem */
+.settings .disabled::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image:
+        repeating-linear-gradient(135deg, rgba(79, 82, 81, 0.4) 0 10px, transparent 10px 20px),
+        repeating-linear-gradient(145deg, rgba(61, 66, 64, 0.3) 0 12px, transparent 12px 24px);
+    z-index: 2;
+    pointer-events: none;
+    /* overlay nie blokuje klikania więcej niż .disabled */
+    border-radius: 8px;
+    /* dla ładnego efektu */
+}
+
+
+.playerInputs {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.playerInputs input {
+    width: 250px;
+    height: 50px;
+    box-shadow: 2px 2px 0 #000;
+    border: 2px solid var(--clr-border);
+    border-radius: 1rem;
+    font-size: 1.5rem;
+
+    text-align: center;
+    background: transparent;
+    outline: none;
+    transition: all .1s ease;
+}
+
+.playerInputs input:focus {
+    transform: translate(2px, 2px);
+    box-shadow: none;
+    outline: none;
+}
+
+.readyBtn {
+    width: 390px;
+    height: 60px;
+    border: 2px solid var(--clr-border);
+    box-shadow: 2px 2px 0 #000;
+    transition: all 0.1s ease;
+    overflow: hidden;
+    cursor: pointer;
+    background: transparent;
+    color: #000;
+    border-radius: 1rem;
+    font-size: 1.5rem;
+    position: relative;
+
+}
+
+.readyBtn:active {
+    transform: translate(2px, 2px);
+    box-shadow: none;
+}
+
+.readyBtn::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: repeating-linear-gradient(135deg, rgba(16, 185, 129, .4) 0 10px, transparent 10px 20px),
+        repeating-linear-gradient(145deg, rgba(16, 185, 129, .3) 0 12px, transparent 12px 24px);
+    mix-blend-mode: multiply;
+    opacity: .8;
+    pointer-events: none;
+}
+
+.readyBtn.active::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: repeating-linear-gradient(135deg, rgba(185, 16, 16, 0.4) 0 10px, transparent 10px 20px),
+        repeating-linear-gradient(145deg, rgba(185, 16, 16, 0.3) 0 12px, transparent 12px 24px);
+    mix-blend-mode: multiply;
+    opacity: .8;
+    pointer-events: none;
+}
+
+
+.playersList {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.players {
+    width: 390px;
+    height: 75px;
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 0.7rem;
+
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.players img {
+    width: 75px;
+    height: 75px;
+    border-radius: 0.7rem;
+    box-shadow: 2px 2px 0 #000;
+    border: 2px solid var(--clr-border);
+}
+
+.playersTitle {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    font-size: .5rem;
+    color: #f0f0f0;
+    background-color: var(--clr-border);
+    border-radius: 0.7rem;
+    padding: 0 .2rem;
+    max-width: 73px;
+}
+
+.playersName {
+    margin: 20px;
+    font-size: 1.5rem;
+}
+
+.status {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: auto;
+}
+
+.removeBtn {
+    position: relative;
+
+    margin: 0 20px;
+    padding: .2rem 1rem;
+    font-size: 1rem;
+    font-family: "Gloria Hallelujah", cursive;
+    color: black;
+    border: 2px solid var(--clr-border);
+    background: transparent;
+    overflow: hidden;
+
+    border-radius: 6px;
+    cursor: pointer;
+    box-shadow: 2px 2px 0 #000;
+    transition: all 0.1s ease;
+}
+
+.removeBtn:active {
+    transform: translate(2px, 2px);
+    box-shadow: none;
+}
+
+.removeBtn::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: repeating-linear-gradient(135deg, rgba(185, 16, 16, 0.4) 0 10px, transparent 10px 20px),
+        repeating-linear-gradient(145deg, rgba(185, 16, 16, 0.3) 0 12px, transparent 12px 24px);
+    mix-blend-mode: multiply;
+    opacity: .8;
+    pointer-events: none;
+}
+
+.waitingMessage {
+    width: 390px;
+    height: min-content;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 1rem;
+    font-size: 1.5rem;
+    flex-direction: column;
+    padding: 20px;
+}
+
+.waitingActions {
+    display: flex;
+    gap: 1rem;
+}
+
+.waitingActions button {
+    position: relative;
+    font-size: 0.9rem;
+    font-family: "Gloria Hallelujah", cursive;
+    color: black;
+    border: none;
+    background: transparent;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.1s ease;
+}
+
+.waitingActions button:active {
+    transform: translate(2px, 2px);
+    box-shadow: none;
+}
+
+
+
+
+@media (max-width: 1200px) {
+    :root {
+        --scale-note: .9;
+    }
+}
+
+@media (max-width: 850px) {
+    :root {
+        --scale-note: .8;
+    }
+}
+
+@media (max-width: 700px) {
+    :root {
+        --scale-note: .7;
+    }
+}
+
+@media (max-width: 550px) {
+    :root {
+        --scale-note: .6;
+    }
+}
+
+@media (max-width: 400px) {
+    :root {
+        --scale-note: .5;
+    }
+}
+
+@media (max-width: 320px) {
+    .lobbyNote {
+        top: 100px;
+    }
+}
+
+/* ZAWSZE widoczne gniazdo badge (miejsce) – odpowiada pozycjonowaniu badge */
+.badgeSlot {
+    position: absolute;
+    top: -15px;
+    right: -15px;
+    width: 38px;
+    height: 38px;
+    border-radius: 999px;
+    border: 2px dashed #cbd5e1;
+    z-index: 1;
+    /* pod właściwym badge */
+    pointer-events: none;
+}
+
+
+/* badge jako kółko nad slotem */
+.badge {
+    position: absolute;
+    top: -15px;
+    right: -15px;
+    width: 38px;
+    height: 38px;
+    border-radius: 999px;
+    /*border: 2px solid #334155;*/
+    background: linear-gradient(135deg, var(--badgeB), var(--badgeA));
+    color: white;
+    display: grid;
+    place-items: center;
+    font-weight: 600;
+    user-select: none;
+    cursor: grab;
+    z-index: 2;
+}
+
+
+
+/* delikatny stan drag tylko kursorem – BEZ opacity/rozmiaru */
+.badgeDragging {
+    cursor: grabbing;
+}
+
+/* ukryj badge (np. w miejscu startu i nad celem podczas hoveru) */
+.badgeHidden {
+    visibility: hidden;
+    pointer-events: none;
+    display: inline-block;
+}
+
+
+/* podświetlenie docelowego boxa */
+.box[data-over="1"] {
+    outline: 3px dashed rgba(59, 130, 246, .35);
+    outline-offset: 3px;
+}
+
+/* overlay dla badge (jeśli używasz) */
+.dragGhost {
+    width: 38px;
+    height: 38px;
+    border-radius: 999px;
+    display: grid;
+    place-items: center;
+    font-weight: 700;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, .2);
+    z-index: 10000;
+    /* zawsze nad wszystkim */
+    background: linear-gradient(135deg, var(--badgeB), var(--badgeA));
+    color: white;
+}
+
+/* overlay dla korony podczas przeciągania */
+.dragGhostCrown {
+    position: absolute;
+    font-size: 2rem;
+    transform: rotate(-30deg);
+    z-index: 10000;
+    /* zawsze nad wszystkim */
+    /* złoty blask dla korony */
+}
+
+/* Korona – bez zmian rozmiaru/opacity podczas drag */
+.playerHostCrown {
+    position: absolute;
+    top: -15px;
+    left: -17px;
+    transform: rotate(-30deg);
+    font-size: 2rem;
+    line-height: 1;
+    cursor: grab;
+    user-select: none;
+    z-index: 3;
+    /* nad badge */
+}
+
+
+/* TYLKO podgląd (preview) na najechanych kartach */
+.crownPreview {
+    opacity: .5;
+    pointer-events: none;
+}
+
+/* ukryj główną koronę podczas dragowania */
+.crownHidden {
+    visibility: hidden;
+}
+
+/* jeżeli używasz korony w wierszu listy */
+.inlineCrown {
+    position: relative;
+    z-index: 3;
+    margin-left: .5rem;
+}
+
+
+
+
+
+/* Lobby.module.css */
+.playerIcons {
+    display: inline-flex;
+    gap: 4px;
+    margin-left: 6px;
+    vertical-align: middle;
+}
+
+.playerIcon {
+    line-height: 1;
+}
+
+
+.waitText {
+  display: inline-flex;
+  align-items: baseline;
+  white-space: nowrap;
+  font-family: 'Patrick Hand', 'Comic Sans MS', 'Segoe Print', cursive;
+  letter-spacing: 0.02em;
+  color: #2f2a24;
+  user-select: none;
+}
+
+
+.neat {
+  font-size: 1.5rem;
+  transform: rotate(-0.4deg);
+}
+
+.angryCaps {
+  font-size: 1.4rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  transform: rotate(0.5deg);
+  animation: waitJitter 0.14s infinite alternate;
+}
+
+.tired {
+  font-size: 1.3rem;
+  opacity: 0.92;
+  transform: rotate(-0.8deg);
+}
+
+.final {
+  font-size: 1.35rem;
+  font-weight: 600;
+  transform: rotate(0.2deg);
+}
+
+.annoyed {
+  font-size: 1.25arem;
+  font-weight: 700;
+  transform: rotate(-1deg);
+  animation: annoyedShake 0.22s infinite alternate;
+}
+
+
+
+@keyframes waitJitter {
+  0% {
+    transform: rotate(0.5deg) translateX(0);
+  }
+  100% {
+    transform: rotate(-0.5deg) translateX(0.5px);
+  }
+}
+
+@keyframes annoyedShake {
+  0% {
+    transform: rotate(-1deg) translateX(0);
+  }
+  100% {
+    transform: rotate(0.4deg) translateX(0.6px);
+  }
+}

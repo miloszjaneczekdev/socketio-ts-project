@@ -1,0 +1,139 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+
+    font-family: "Gloria Hallelujah", cursive;
+}
+
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+:root {
+    --clr-paper: #fefdf8;
+    --clr-lines: #dedede;
+    --clr-border: #444;
+    --clr-note: #fffad1;
+    --clr-note-border: #d5c56e;
+    --clr-note-boxshadow: rgba(0, 0, 0, 0.15);
+
+    --green-marker5: rgba(16, 185, 129, .5);
+    --blue-marker5: rgba(6, 182, 212, .5);
+    --red-marker5: rgba(185, 16, 16, .5);
+    --grey-marker5: rgba(185, 185, 185, .5);
+
+    --green-marker4: rgba(16, 185, 129, .4);
+    --blue-marker4: rgba(6, 182, 212, .4);
+    --red-marker4: rgba(185, 16, 16, .4);
+    --grey-marker4: rgba(185, 185, 185, .4);
+
+    --green-marker3: rgba(16, 185, 129, .3);
+    --blue-marker3: rgba(6, 182, 212, .3);
+    --red-marker3: rgba(185, 16, 16, .3);
+    --grey-marker3: rgba(185, 185, 185, .3);
+
+    --box-shadow: #000;
+
+    --tape-gray: #dbd8be;
+    --tape-edge-gray: #b7b49d;
+    --transparent: rgba(255, 255, 255, 0);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --clr-paper: #1c1c1c;
+        --clr-lines: #2a2a2a;
+        --clr-border: #ccc;
+
+        --clr-note: #E1DCB3;
+        --clr-note-border: #B7A750;
+        --clr-note-boxshadow: rgba(255, 255, 255, 0.25);
+
+        /* 💚 Zielony: bardziej neonowy */
+        --green-marker5: rgba(0, 255, 155, 0.6);
+        --green-marker4: rgba(0, 255, 155, 0.5);
+        --green-marker3: rgba(0, 255, 155, 0.35);
+
+        /* 💙 Niebieski: żywy błękit */
+        --blue-marker5: rgba(0, 200, 255, 0.6);
+        --blue-marker4: rgba(0, 200, 255, 0.5);
+        --blue-marker3: rgba(0, 200, 255, 0.35);
+
+        /* ❤️ Czerwony: soczysty, ale nie agresywny */
+        --red-marker5: rgba(255, 80, 80, 0.6);
+        --red-marker4: rgba(255, 80, 80, 0.5);
+        --red-marker3: rgba(255, 80, 80, 0.35);
+
+        --box-shadow: #777;
+    }
+}
+
+/* Klasa utility dla dostępności */
+.sr-only {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+}
+
+
+html,
+body {
+    height: 100%;
+    width: 100%;
+    font-family: "Gloria Hallelujah", cursive;
+    background:
+        repeating-linear-gradient(to bottom,
+            var(--clr-paper) 0 28px,
+            var(--clr-lines) 29px 30px),
+        var(--clr-paper);
+}
+
+#root {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    border: 3px solid var(--clr-border);
+}
+
+.container {
+    filter: url(#squiggly-soft);
+}
+
+.loadingMessage {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 24px;
+    color: #333;
+}
+
+::-webkit-scrollbar {
+    width: 5px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #888;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+
+@view-transition {
+    navigation: auto;
+}

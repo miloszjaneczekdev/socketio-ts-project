@@ -1,0 +1,48 @@
+.bottomNav {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.bottomNav ul {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  padding: 0;
+  margin: 0;
+}
+
+.bottomNav a {
+  color: var(--clr-border);
+  font-size: 1rem;
+}
+
+.bottomNav a:focus-visible,
+.footer a:focus-visible {
+  outline: .125rem solid #ffcc00;
+  outline-offset: .35rem;
+  border-radius: 40%;
+}
+
+.footer {
+  text-align: center;
+  margin-top: 0.9rem;
+  font-size: 1rem;
+}
+
+.footer a {
+  color: var(--green-marker5);
+  text-decoration: underline;
+}
+
+@media (max-width: 760px) {
+  .bottomNav ul {
+    gap: 0.75rem;
+  }
+
+  .bottomNav a,
+  .footer {
+    font-size: 0.9rem;
+  }
+}
