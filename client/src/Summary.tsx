@@ -208,25 +208,6 @@ function formatLobbyCodeDisplay(input?: string | null) {
   return raw.match(/.{1,3}/g)?.join(' - ') || raw;
 }
 
-function getModeHitLabel(mode?: string | null) {
-  const normalizedMode = (mode || '').toLowerCase();
-
-  if (normalizedMode === 'coop') return 'Odgadnięte wspólnie';
-  if (normalizedMode === 'ffa' || normalizedMode === 'turbo') return 'Odgadnięte cele';
-  if (normalizedMode === 'solo') return 'Trafienia kodu';
-
-  return 'Trafienia';
-}
-
-function getModeHitValue(row: SummaryRow, mode?: string | null) {
-  const normalizedMode = (mode || '').toLowerCase();
-
-  if (normalizedMode === 'coop' || normalizedMode === 'ffa' || normalizedMode === 'turbo') {
-    return row.targetsSolved ?? (isSolved(row) ? 1 : 0);
-  }
-
-  return row.hits ?? row.targetsSolved ?? (isSolved(row) ? 1 : 0);
-}
 
 
 type ShotHint = {
