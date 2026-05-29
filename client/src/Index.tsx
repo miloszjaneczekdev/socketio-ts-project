@@ -26,7 +26,11 @@ function Index() {
     const prefersReducedMotion = useRef<boolean>(
         typeof window !== 'undefined' &&
         !!window.matchMedia &&
-        window.matchMedia('(prefers-reduced-motion: reduce)').matches
+        (
+            window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
+            window.matchMedia('(hover: none) and (pointer: coarse)').matches ||
+            window.matchMedia('(max-width: 900px)').matches
+        )
     )
 
     const setInputRef = useCallback(

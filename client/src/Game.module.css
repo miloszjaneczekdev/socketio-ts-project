@@ -18,7 +18,8 @@
 .container {
   display: flex;
   flex: 1;
-  height: 100vh;
+  min-height: 100vh;
+  min-height: 100svh;
 }
 
 .sidebarRight{
@@ -34,7 +35,7 @@
   gap: 50px;
   border-left: 5px dotted var(--clr-border);
   margin: 50px 0;
-  height: calc(100vh - 106px);
+  height: calc(100svh - 106px);
 }
 
 
@@ -540,7 +541,7 @@
 
 .summaryModal {
   width: min(920px, calc(100vw - 32px));
-  max-height: calc(100vh - 48px);
+  max-height: calc(100svh - 48px);
   overflow: auto;
 }
 
@@ -616,6 +617,7 @@
 
 .summaryPage {
   min-height: 100vh;
+  min-height: 100svh;
   padding: 32px;
   display: grid;
   place-items: center;

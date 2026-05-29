@@ -121,6 +121,46 @@ function isNonEmpty<T>(v: T | null | undefined): v is T {
   return v !== null && v !== undefined;
 }
 
+function padTimePart(n: number | string, l = 2) {
+  return String(n).padStart(l, '0');
+}
+
+function formatTimerMs(ms: number) {
+  const total = Math.max(0, Math.floor(ms));
+  const sec = Math.floor(total / 1000);
+  const m = Math.floor(sec / 60);
+  const s = sec % 60;
+  const cs = Math.floor((total % 1000) / 10);
+  return `${padTimePart(m)}:${padTimePart(s)}.${padTimePart(cs)}`;
+}
+
+function TimerText({ deadline }: { deadline: number | null }) {
+  const ref = useRef<HTMLSpanElement | null>(null);
+
+  useEffect(() => {
+    let frameId = 0;
+
+    const render = () => {
+      if (ref.current) {
+        const left = deadline ? Math.max(0, deadline - Date.now()) : 0;
+        ref.current.textContent = formatTimerMs(left);
+      }
+
+      if (deadline && deadline > Date.now()) {
+        frameId = window.requestAnimationFrame(render);
+      }
+    };
+
+    render();
+
+    return () => {
+      if (frameId) window.cancelAnimationFrame(frameId);
+    };
+  }, [deadline]);
+
+  return <span ref={ref}>{formatTimerMs(deadline ? deadline - Date.now() : 0)}</span>;
+}
+
 /* ========= Komponent ========= */
 
 function Game(): JSX.Element {
@@ -185,7 +225,6 @@ function Game(): JSX.Element {
   const [summaryPending, setSummaryPending] = useState(false);
   const [summaryCountdown, setSummaryCountdown] = useState(5);
 
-  const [hudMsLeft, setHudMsLeft] = useState(0);
   const [turnDeadline, setTurnDeadline] = useState<number | null>(null);
   const [waitingForAuto, setWaitingForAuto] = useState(false);
 
@@ -903,37 +942,6 @@ function Game(): JSX.Element {
   }, [turnDeadline, waitingForAuto, autoGuess]);
 
   /* ========= HUD – ms do końca ========= */
-  useEffect(() => {
-    let id: number | null = null;
-
-    const tick = () => {
-      const now = Date.now();
-      let left = 0;
-
-      if (turnDeadline) {
-        left = Math.max(0, turnDeadline - now);
-      } else if (mode === 'turbo' && myTurboEndTs) {
-        left = Math.max(0, myTurboEndTs - now);
-      } else if ((mode === 'coop' || mode === 'ffa' || mode === 'standard' || mode === 'solo') && roundEndTs) {
-        left = Math.max(0, roundEndTs - now);
-      }
-
-
-      setHudMsLeft((current) => {
-        const nextBucket = Math.ceil(left / 250);
-        const currentBucket = Math.ceil(current / 250);
-        return nextBucket === currentBucket ? current : left;
-      });
-    };
-
-    tick();
-    id = window.setInterval(tick, 250) as unknown as number;
-
-    return () => {
-      if (id) window.clearInterval(id);
-    };
-  }, [turnDeadline, mode, myTurboEndTs, roundEndTs]);
-
   /* ========= hot-seat overlay ========= */
   const shouldShowHotSeatOverlay =
     isHotSeat &&
@@ -980,20 +988,20 @@ function Game(): JSX.Element {
 
   /* ========= formaty czasu ========= */
   const pad = (n: number | string, l = 2) => String(n).padStart(l, '0');
-  const formatMs = (ms: number) => {
-    const total = Math.max(0, Math.floor(ms));
-    const sec = Math.floor(total / 1000);
-    const m = Math.floor(sec / 60);
-    const s = sec % 60;
-    const cs = Math.floor((total % 1000) / 10);
-    return `${pad(m)}:${pad(s)}.${pad(cs)}`;
-  };
   const formatMsShort = (ms: number) => {
     const total = Math.max(0, Math.floor(ms));
     const s = Math.floor(total / 1000);
     const cs = Math.floor((total % 1000) / 10);
     return `${pad(s)}.${pad(cs)}`;
   };
+
+  const hudDeadline =
+    turnDeadline ??
+    (mode === 'turbo'
+      ? myTurboEndTs
+      : (mode === 'coop' || mode === 'ffa' || mode === 'standard' || mode === 'solo')
+        ? roundEndTs
+        : null);
 
   /* ========= opis podpowiedzi ========= */
   const renderHintText = (
@@ -1382,7 +1390,7 @@ function Game(): JSX.Element {
             {timerSec ? (
               <>
                 Pozostało:{' '}
-                <strong>{formatMs(hudMsLeft)}</strong>
+                <strong><TimerText deadline={hudDeadline} /></strong>
               </>
             ) : (
               <>Brak limitu czasu</>

@@ -1,5 +1,6 @@
 .container {
   min-height: 100vh;
+  min-height: 100svh;
   padding: 112px 24px 28px;
   color: var(--clr-border);
   overflow-x: hidden;

@@ -1,7 +1,7 @@
 .page {
   flex: 1 0 auto;
   min-height: calc(100vh - 6px);
-  min-height: calc(100dvh - 6px);
+  min-height: calc(100svh - 6px);
   color: var(--clr-border);
   display: flex;
   flex-direction: column;
@@ -67,6 +67,14 @@
   margin: 0 auto;
   overflow: visible;
   padding: clamp(2rem, 3.5vw, 3rem) 0 0;
+}
+
+@media (hover: none) and (pointer: coarse), (max-width: 900px), (prefers-reduced-motion: reduce) {
+  .logo {
+    position: static;
+    align-self: flex-start;
+    margin: 1rem 1rem 0;
+  }
 }
 
 .header {

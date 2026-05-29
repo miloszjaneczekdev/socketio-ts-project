@@ -11,7 +11,6 @@ const Game = lazy(() => import('./Game'))
 const Summary = lazy(() => import('./Summary'))
 const LobbiesPage = lazy(() => import('./Lobbies'))
 const SocketRoute = lazy(() => import('./SocketRoute'))
-const PaperPlaneFolding = lazy(() => import('./PaperPlaneFolding'))
 
 const HowToPlay = lazy(() => import('./pages/HowToPlay'))
 const Rules = lazy(() => import('./pages/Rules'))
@@ -38,7 +37,6 @@ createRoot(document.getElementById('root')!).render(
         <Route path="/termsofservice" element={<TermsOfService />} />
         <Route path="/privacypolicy" element={<PrivacyPolicy />} />
 
-        <Route path="/plane" element={<PaperPlaneFolding />} />
       </Routes>
     </Suspense>
   </BrowserRouter>,

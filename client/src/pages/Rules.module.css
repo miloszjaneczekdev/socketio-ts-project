@@ -1,9 +1,18 @@
 .page {
   min-height: 100vh;
+  min-height: 100svh;
   color: var(--clr-border);
   display: flex;
   flex-direction: column;
   position: relative;
+}
+
+@media (hover: none) and (pointer: coarse), (max-width: 900px), (prefers-reduced-motion: reduce) {
+  .logo {
+    position: static;
+    align-self: flex-start;
+    margin: 1rem 1rem 0;
+  }
 }
 
 .logo {

@@ -51,7 +51,7 @@
 
   transform: rotate(var(--rot, 0deg));
   transition: transform .2s ease, opacity .2s ease, filter .2s ease, box-shadow .2s ease;
-  will-change: transform, opacity, box-shadow;
+  will-change: transform, opacity;
   z-index: var(data-sticky-idx);
 }
 

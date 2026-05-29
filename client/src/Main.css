@@ -86,7 +86,7 @@
 
 html,
 body {
-    height: 100%;
+    min-height: 100%;
     width: 100%;
     overflow-x: hidden;
     font-family: "Gloria Hallelujah", cursive;
@@ -97,6 +97,7 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    min-height: 100svh;
     border: 3px solid var(--clr-border);
     background:
         repeating-linear-gradient(to bottom,
@@ -105,8 +106,20 @@ body {
         var(--clr-paper);
 }
 
+@supports (min-height: 100dvh) {
+    #root {
+        min-height: 100dvh;
+    }
+}
+
 .container {
     filter: url(#squiggly-soft);
+}
+
+@media (hover: none) and (pointer: coarse), (max-width: 900px), (prefers-reduced-motion: reduce) {
+    .container {
+        filter: none;
+    }
 }
 
 .loadingMessage {
@@ -133,9 +146,4 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
     background: #555;
-}
-
-
-@view-transition {
-    navigation: auto;
 }
