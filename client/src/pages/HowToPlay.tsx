@@ -326,17 +326,58 @@ function makeRandomLobbyCode() {
   )
 }
 
-function useTypewriterText(text: string, typeMs = 26, eraseMs = 12, pauseMs = 140) {
-  const [displayed, setDisplayed] = useState('')
+function getShouldUseStaticDemos() {
+  if (typeof window === 'undefined' || !window.matchMedia) return false
+
+  return (
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
+    window.matchMedia('(hover: none) and (pointer: coarse)').matches ||
+    window.matchMedia('(max-width: 900px)').matches
+  )
+}
+
+function useStaticDemos() {
+  const [staticDemos, setStaticDemos] = useState(getShouldUseStaticDemos)
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || !window.matchMedia) return undefined
+
+    const queries = [
+      window.matchMedia('(prefers-reduced-motion: reduce)'),
+      window.matchMedia('(hover: none) and (pointer: coarse)'),
+      window.matchMedia('(max-width: 900px)'),
+    ]
+    const sync = () => setStaticDemos(getShouldUseStaticDemos())
+
+    queries.forEach((query) => query.addEventListener('change', sync))
+    return () => {
+      queries.forEach((query) => query.removeEventListener('change', sync))
+    }
+  }, [])
+
+  return staticDemos
+}
+
+function useTypewriterText(text: string, typeMs = 26, eraseMs = 12, pauseMs = 140, disabled = false) {
+  const [displayed, setDisplayed] = useState(disabled ? text : '')
   const [target, setTarget] = useState(text)
   const [isDeleting, setIsDeleting] = useState(false)
 
   useEffect(() => {
+    if (disabled) {
+      setDisplayed(text)
+      setTarget(text)
+      setIsDeleting(false)
+      return
+    }
+
     setTarget(text)
     setIsDeleting(true)
-  }, [text])
+  }, [disabled, text])
 
   useEffect(() => {
+    if (disabled) return undefined
+
     let timeoutId: number | undefined
 
     if (isDeleting) {
@@ -362,24 +403,30 @@ function useTypewriterText(text: string, typeMs = 26, eraseMs = 12, pauseMs = 14
         if (timeoutId !== undefined) window.clearTimeout(timeoutId)
       }
     }
-  }, [displayed, eraseMs, isDeleting, pauseMs, target, typeMs])
+  }, [disabled, displayed, eraseMs, isDeleting, pauseMs, target, typeMs])
 
-  return displayed
+  return disabled ? text : displayed
 }
 
 function ModeDemoCard({ demo }: { demo: (typeof modeDemos)[number] }) {
+  const staticDemos = useStaticDemos()
   const [activeIndex, setActiveIndex] = useState(0)
   const activeSlide = demo.slides[activeIndex]
-  const typedTitle = useTypewriterText(activeSlide.title)
-  const typedDesc = useTypewriterText(activeSlide.desc, 22, 10, 120)
+  const typedTitle = useTypewriterText(activeSlide.title, 26, 12, 140, staticDemos)
+  const typedDesc = useTypewriterText(activeSlide.desc, 22, 10, 120, staticDemos)
 
   useEffect(() => {
+    if (staticDemos) {
+      setActiveIndex(0)
+      return undefined
+    }
+
     const timeoutId = window.setTimeout(() => {
       setActiveIndex((current) => (current + 1) % demo.slides.length)
     }, activeSlide.durationMs)
 
     return () => window.clearTimeout(timeoutId)
-  }, [activeIndex, activeSlide.durationMs, demo.slides.length])
+  }, [activeIndex, activeSlide.durationMs, demo.slides.length, staticDemos])
 
   return (
     <article className={styles.modeDemoCard}>
@@ -412,6 +459,7 @@ function makeSecretDemoCode(seed: number) {
 }
 
 function SecretCodeDemo() {
+  const staticDemos = useStaticDemos()
   const [code, setCode] = useState<string[]>(Array(4).fill(''))
   const [activeKey, setActiveKey] = useState<string | null>(null)
   const [activeCodeIndex, setActiveCodeIndex] = useState<number | null>(null)
@@ -421,6 +469,7 @@ function SecretCodeDemo() {
   const [isSubmitted, setIsSubmitted] = useState(false)
 
   useEffect(() => {
+    if (staticDemos) return undefined
     if (!timerRunning) return undefined
 
     const intervalId = window.setInterval(() => {
@@ -428,9 +477,20 @@ function SecretCodeDemo() {
     }, SECRET_DEMO_TIMER_TICK_MS)
 
     return () => window.clearInterval(intervalId)
-  }, [timerRunning])
+  }, [staticDemos, timerRunning])
 
   useEffect(() => {
+    if (staticDemos) {
+      setCode(['4', '8', '2', '7'])
+      setActiveKey(null)
+      setActiveCodeIndex(null)
+      setTimeLeft(10)
+      setTimerRunning(false)
+      setMessage('Ustaw swĂłj kod i zatwierdĹş go przyciskiem OK.')
+      setIsSubmitted(true)
+      return undefined
+    }
+
     let cancelled = false
 
     const sleep = (ms: number) => new Promise<void>((resolve) => {
@@ -515,7 +575,7 @@ function SecretCodeDemo() {
     return () => {
       cancelled = true
     }
-  }, [])
+  }, [staticDemos])
 
   return (
     <div className={styles.secretSetupDemo} aria-label="Animacja ustawiania sekretnego kodu">
@@ -594,6 +654,7 @@ type GuessDemoHistoryItem = {
 }
 
 function GuessInputDemo() {
+  const staticDemos = useStaticDemos()
   const [guess, setGuess] = useState<string[]>(Array(4).fill(''))
   const [activeKey, setActiveKey] = useState<string | null>(null)
   const [activeCodeIndex, setActiveCodeIndex] = useState<number | null>(null)
@@ -602,6 +663,16 @@ function GuessInputDemo() {
   const [history, setHistory] = useState<GuessDemoHistoryItem[]>([])
 
   useEffect(() => {
+    if (staticDemos) {
+      setGuess(['7', '3', '9', '1'])
+      setActiveKey(null)
+      setActiveCodeIndex(null)
+      setIsSubmitted(true)
+      setMessage('Wpisz prĂłbÄ™ i zatwierdĹş jÄ… przyciskiem OK.')
+      setHistory([{ id: 'static-7391', guess: '7391', hint: '1 dobre miejsce' }])
+      return undefined
+    }
+
     let cancelled = false
 
     const sleep = (ms: number) => new Promise<void>((resolve) => {
@@ -678,7 +749,7 @@ function GuessInputDemo() {
     return () => {
       cancelled = true
     }
-  }, [])
+  }, [staticDemos])
 
   return (
     <div className={styles.guessInputDemo} aria-label="Animacja wpisywania próby i historii strzałów">
@@ -775,6 +846,7 @@ function GuessInputDemo() {
 
 function HowToPlay() {
   const navigate = useNavigate()
+  const staticDemos = useStaticDemos()
   const leaveBtnText = '← Wróć'
 
   const [startDemoText, setStartDemoText] = useState('')
@@ -789,6 +861,15 @@ function HowToPlay() {
   }
 
   useEffect(() => {
+    if (staticDemos) {
+      setStartDemoText(startDemoTexts.join)
+      setStartDemoCode(['A', 'B', 'C', '1', '2', '3'])
+      setStartDemoAction(null)
+      setStartDemoFocus(null)
+      setStartDemoHidden(false)
+      return undefined
+    }
+
     let cancelled = false
 
     const sleep = (ms: number) => new Promise<void>((resolve) => {
@@ -904,7 +985,7 @@ function HowToPlay() {
     return () => {
       cancelled = true
     }
-  }, [])
+  }, [staticDemos])
 
   useEffect(() => {
     const getScrollTop = () => (

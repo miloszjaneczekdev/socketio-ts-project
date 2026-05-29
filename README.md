@@ -29,7 +29,8 @@ Run the client:
 npm --prefix client run dev
 ```
 
-By default the client connects to `http://localhost:3000/`, and the server listens on port `3000`.
+In development, the Vite client proxies `/socket.io` to the server on `http://localhost:3000/`.
+Open the client from other devices through the computer's LAN IP, for example `http://192.168.x.x:5173`, not `localhost`.
 
 ## Checks
 

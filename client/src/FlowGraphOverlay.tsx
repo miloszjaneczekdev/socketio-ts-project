@@ -60,6 +60,7 @@ const FlowGraphOverlay = memo(function FlowGraphOverlay({
   const nodesRef = useRef<NodeT[]>([])
   const edgesRef = useRef<EdgeT[]>([])
   const dragRef = useRef<DragT>(null)
+  const redrawRafRef = useRef<number | null>(null)
 
   // preferencje stron per nodeId: { out, in }
   const sidePrefsRef = useRef<Map<string, { out?: SideT; in?: SideT }>>(new Map())
@@ -617,18 +618,29 @@ const FlowGraphOverlay = memo(function FlowGraphOverlay({
   }, [layoutNodes, ensureEdges, render, isHostLockActive])
 
   useEffect(() => {
-    const redraw = () => requestAnimationFrame(recalcAndRender)
+    const redraw = () => {
+      if (redrawRafRef.current !== null) return
+      redrawRafRef.current = requestAnimationFrame(() => {
+        redrawRafRef.current = null
+        recalcAndRender()
+      })
+    }
+
     window.addEventListener('resize', redraw, { passive: true })
     document.addEventListener('scroll', redraw as EventListener, { passive: true, capture: true })
     const mo = new MutationObserver(redraw)
     if (containerRef.current) {
-      mo.observe(containerRef.current, { childList: true, subtree: true, attributes: true, attributeFilter: ['class', 'style'] })
+      mo.observe(containerRef.current, { childList: true, subtree: true })
     }
     recalcAndRender()
     return () => {
       window.removeEventListener('resize', redraw)
       document.removeEventListener('scroll', redraw as EventListener, true)
       mo.disconnect()
+      if (redrawRafRef.current !== null) {
+        cancelAnimationFrame(redrawRafRef.current)
+        redrawRafRef.current = null
+      }
     }
   }, [recalcAndRender, containerRef, palette, edgeColors, colorResolver])
 

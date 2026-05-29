@@ -505,20 +505,17 @@ function Game(): JSX.Element {
     setSummaryCountdown(5);
 
     const startedAt = Date.now();
-    let intervalId: number | undefined;
-
     const tick = () => {
       const left = Math.max(0, 5 - Math.floor((Date.now() - startedAt) / 1000));
-      setSummaryCountdown(left);
+      setSummaryCountdown((current) => (current === left ? current : left));
 
       if (left <= 0) {
-        if (intervalId) window.clearInterval(intervalId);
+        window.clearInterval(intervalId);
         navigate(`/summary?code=${lobbyCode}`, { replace: true });
       }
     };
 
-    tick();
-    intervalId = window.setInterval(tick, 200) as unknown as number;
+    const intervalId = window.setInterval(tick, 1000) as unknown as number;
 
     return () => {
       if (intervalId) window.clearInterval(intervalId);
@@ -900,14 +897,9 @@ function Game(): JSX.Element {
   // reakcja na upłynięcie deadline
   useEffect(() => {
     if (!turnDeadline || !waitingForAuto) return;
-    const id = window.setInterval(() => {
-      const now = Date.now();
-      if (now >= turnDeadline) {
-        window.clearInterval(id);
-        autoGuess();
-      }
-    }, 80);
-    return () => window.clearInterval(id);
+    const timeoutMs = Math.max(0, turnDeadline - Date.now());
+    const id = window.setTimeout(autoGuess, timeoutMs);
+    return () => window.clearTimeout(id);
   }, [turnDeadline, waitingForAuto, autoGuess]);
 
   /* ========= HUD – ms do końca ========= */
@@ -927,11 +919,15 @@ function Game(): JSX.Element {
       }
 
 
-      setHudMsLeft(left);
+      setHudMsLeft((current) => {
+        const nextBucket = Math.ceil(left / 250);
+        const currentBucket = Math.ceil(current / 250);
+        return nextBucket === currentBucket ? current : left;
+      });
     };
 
     tick();
-    id = window.setInterval(tick, 80) as unknown as number;
+    id = window.setInterval(tick, 250) as unknown as number;
 
     return () => {
       if (id) window.clearInterval(id);
@@ -958,15 +954,12 @@ function Game(): JSX.Element {
 
   useEffect(() => {
     if (!hotSeatReadyDeadline || !shouldShowHotSeatOverlay) return;
-    const id = window.setInterval(() => {
-      const now = Date.now();
-      if (now >= hotSeatReadyDeadline) {
-        window.clearInterval(id);
-        setHotSeatReady(true);
-        setHotSeatReadyDeadline(null);
-      }
-    }, 80);
-    return () => window.clearInterval(id);
+    const timeoutMs = Math.max(0, hotSeatReadyDeadline - Date.now());
+    const id = window.setTimeout(() => {
+      setHotSeatReady(true);
+      setHotSeatReadyDeadline(null);
+    }, timeoutMs);
+    return () => window.clearTimeout(id);
   }, [hotSeatReadyDeadline, shouldShowHotSeatOverlay]);
 
   useEffect(() => {

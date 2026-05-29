@@ -1,55 +1,45 @@
 import { Suspense, lazy } from 'react'
 import { createRoot } from 'react-dom/client'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import './Main.css'
-
-
-import Index from './Index'
-import Lobby from './Lobby'
-import Game from './Game'
-import Summary from './Summary'
-
 
 import SVGFilters from './SVGFilters'
 
-import { SocketProvider } from './SocketProvider'
+const Index = lazy(() => import('./Index'))
+const Lobby = lazy(() => import('./Lobby'))
+const Game = lazy(() => import('./Game'))
+const Summary = lazy(() => import('./Summary'))
+const LobbiesPage = lazy(() => import('./Lobbies'))
+const SocketRoute = lazy(() => import('./SocketRoute'))
+const PaperPlaneFolding = lazy(() => import('./PaperPlaneFolding'))
 
-const LobbiesPage = lazy(() => import("./Lobbies"))
-
-const PaperPlaneFolding = lazy(() => import("./PaperPlaneFolding"))
-
-
-import HowToPlay from './pages/HowToPlay'
-import Rules from './pages/Rules'
-import FAQ from './pages/FAQ'
-import Contact from './pages/Contact'
-import TermsOfService from './pages/TermsOfService'
-import PrivacyPolicy from './pages/PrivacyPolicy'
+const HowToPlay = lazy(() => import('./pages/HowToPlay'))
+const Rules = lazy(() => import('./pages/Rules'))
+const FAQ = lazy(() => import('./pages/FAQ'))
+const Contact = lazy(() => import('./pages/Contact'))
+const TermsOfService = lazy(() => import('./pages/TermsOfService'))
+const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'))
 
 createRoot(document.getElementById('root')!).render(
-  <SocketProvider>
-    <BrowserRouter>
-      <SVGFilters />
-      <Suspense fallback={<div className="loadingMessage">Ładowanie…</div>}>
-        <Routes>
-          <Route path="/" element={<Index />} />
+  <BrowserRouter>
+    <SVGFilters />
+    <Suspense fallback={<div className="loadingMessage">Ladowanie...</div>}>
+      <Routes>
+        <Route path="/" element={<SocketRoute><Index /></SocketRoute>} />
+        <Route path="/lobby" element={<SocketRoute><Lobby /></SocketRoute>} />
+        <Route path="/game" element={<SocketRoute><Game /></SocketRoute>} />
+        <Route path="/summary" element={<SocketRoute><Summary /></SocketRoute>} />
+        <Route path="/lobbies" element={<SocketRoute><LobbiesPage /></SocketRoute>} />
 
-          <Route path="/lobby" element={<Lobby />} />
-          <Route path="/game" element={<Game />} />
-          <Route path="/summary" element={<Summary />} />
+        <Route path="/howtoplay" element={<HowToPlay />} />
+        <Route path="/rules" element={<Rules />} />
+        <Route path="/faq" element={<FAQ />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/termsofservice" element={<TermsOfService />} />
+        <Route path="/privacypolicy" element={<PrivacyPolicy />} />
 
-          <Route path="/lobbies" element={<LobbiesPage />} />
-
-          <Route path="/howtoplay" element={<HowToPlay />} />
-          <Route path="/rules" element={<Rules />} />
-          <Route path="/faq" element={<FAQ />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/termsofservice" element={<TermsOfService />} />
-          <Route path="/privacypolicy" element={<PrivacyPolicy />} />
-
-          <Route path="/plane" element={<PaperPlaneFolding />} />
-        </Routes>
-      </Suspense>
-    </BrowserRouter>
-  </SocketProvider>
+        <Route path="/plane" element={<PaperPlaneFolding />} />
+      </Routes>
+    </Suspense>
+  </BrowserRouter>,
 )

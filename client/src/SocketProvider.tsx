@@ -2,17 +2,22 @@ import { createContext, useEffect, type ReactNode } from 'react'
 import { io, Socket } from 'socket.io-client'
 import { v4 as uuidv4 } from 'uuid'
 
-// 🔌 Socket instance
-export const socket: Socket = io('http://localhost:3000/', { autoConnect: false })
+function getSocketUrl() {
+  return import.meta.env.VITE_SOCKET_URL || undefined
+}
 
-// 🌐 Socket context
+export const socket: Socket = io(getSocketUrl(), {
+  autoConnect: false,
+  reconnectionDelay: 1000,
+  reconnectionDelayMax: 5000,
+})
+
 export const SocketContext = createContext<Socket>(socket)
 
 type SocketProviderProps = {
   children: ReactNode
 }
 
-// 🧠 Komponent, który inicjalizuje połączenie i udostępnia socket
 export function SocketProvider({ children }: SocketProviderProps) {
   useEffect(() => {
     let playerId = localStorage.getItem('playerId')
@@ -21,25 +26,24 @@ export function SocketProvider({ children }: SocketProviderProps) {
       localStorage.setItem('playerId', playerId)
     }
 
+    const identify = () => socket.emit('identify', { playerId })
+    const onConnectError = (error: Error) => {
+      console.error('Blad polaczenia: ', (error as any)?.message || error)
+    }
+    const onConnectFailed = () => {
+      console.error('Polaczenie z serwerem nie powiodlo sie.')
+    }
+
+    socket.on('connect', identify)
+    socket.on('connect_error', onConnectError)
+    socket.on('connect_failed', onConnectFailed)
     socket.connect()
 
-    // Obsługuje błędy połączenia
-    socket.on('connect_error', (error: Error) => {
-      console.error('Błąd połączenia: ', (error as any)?.message || error)
-    })
-
-    socket.on('connect_failed', () => {
-      console.error('Połączenie z serwerem nie powiodło się.')
-    })
-
-    // Wysyła identyfikator gracza po połączeniu
-    socket.emit('identify', { playerId })
-
-    // Sprzątanie
     return () => {
+      socket.off('connect', identify)
+      socket.off('connect_error', onConnectError)
+      socket.off('connect_failed', onConnectFailed)
       socket.disconnect()
-      socket.off('connect_error')
-      socket.off('connect_failed')
     }
   }, [])
 

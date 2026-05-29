@@ -24,6 +24,8 @@ pnpm-debug.log*
 
 # TypeScript/Vite cache
 *.tsbuildinfo
+client/.tmp/
+client/.tmp-check/
 client/node_modules/.tmp/
 server/node_modules/.tmp/
 
