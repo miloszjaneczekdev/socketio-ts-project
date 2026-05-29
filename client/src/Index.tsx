@@ -4,6 +4,7 @@ import type { Socket } from 'socket.io-client'
 import clsx from 'clsx'
 import { SocketContext } from './SocketProvider'
 import LobbyRotator from './LobbyRotator'
+import Tooltip from './ToolTip'
 import styles from './Index.module.css'
 
 const RESPONSE_TIMEOUT_MS = 5000
@@ -296,14 +297,16 @@ function Index() {
                         <p className={styles.errorMessage} aria-hidden="true">&nbsp;</p>
                     )}
 
-                    <button
+                    <Tooltip content="Utworz nowe lobby i zostan jego hostem" placement="right">
+                        <button
                         className={clsx(styles.btn, styles.green)}
                         type="button"
                         onClick={handleCreateLobby}
                         disabled={isCreating || isJoining}
                     >
                         {isCreating ? 'Tworzenie...' : 'Stwórz lobby'}
-                    </button>
+                        </button>
+                    </Tooltip>
 
                     <fieldset className={clsx(styles.codeBox, shake && styles.shake)}>
                         <legend className="sr-only" id="code-legend">Kod lobby (6 znaków alfanumerycznych)</legend>
@@ -318,31 +321,33 @@ function Index() {
 
                             return (
                                 <React.Fragment key={index}>
-                                    <input
-                                        id={`code-${index}`}
-                                        ref={setInputRef(index)}
-                                        maxLength={1}
-                                        value={char}
-                                        onChange={(e) => handleChange(e, index)}
-                                        onKeyDown={(e) => handleKeyDown(e, index)}
-                                        onPaste={handlePaste}
-                                        placeholder={char ? '' : (ph[index] || '')}
-                                        inputMode="text"
-                                        autoComplete="one-time-code"
-                                        autoCapitalize="characters"
-                                        autoCorrect="off"
-                                        spellCheck={false}
-                                        pattern="[A-Za-z0-9]"
-                                        aria-label={`Znak ${index + 1} z 6`}
-                                        aria-invalid={hasFieldError || undefined}
-                                        aria-errormessage={hasFieldError ? 'join-error' : undefined}
-                                        aria-describedby={describedBy}
-                                        className={clsx(
-                                            styles.codeInput,
-                                            char && styles.filled,
-                                            hasFieldError && styles.inputError
-                                        )}
-                                    />
+                                    <Tooltip content={`Wpisz ${index + 1}. znak kodu lobby`} placement="top">
+                                        <input
+                                            id={`code-${index}`}
+                                            ref={setInputRef(index)}
+                                            maxLength={1}
+                                            value={char}
+                                            onChange={(e) => handleChange(e, index)}
+                                            onKeyDown={(e) => handleKeyDown(e, index)}
+                                            onPaste={handlePaste}
+                                            placeholder={char ? '' : (ph[index] || '')}
+                                            inputMode="text"
+                                            autoComplete="one-time-code"
+                                            autoCapitalize="characters"
+                                            autoCorrect="off"
+                                            spellCheck={false}
+                                            pattern="[A-Za-z0-9]"
+                                            aria-label={`Znak ${index + 1} z 6`}
+                                            aria-invalid={hasFieldError || undefined}
+                                            aria-errormessage={hasFieldError ? 'join-error' : undefined}
+                                            aria-describedby={describedBy}
+                                            className={clsx(
+                                                styles.codeInput,
+                                                char && styles.filled,
+                                                hasFieldError && styles.inputError
+                                            )}
+                                        />
+                                    </Tooltip>
                                     {index === 2 && (
                                         <span className={styles.dash} aria-hidden="true">-</span>
                                     )}
@@ -351,9 +356,11 @@ function Index() {
                         })}
                     </fieldset>
 
-                    <button className={clsx(styles.btn, styles.blue)} type="submit" disabled={isJoining || isCreating}>
+                    <Tooltip content="Dolacz do lobby po wpisaniu 6-znakowego kodu" placement="right">
+                        <button className={clsx(styles.btn, styles.blue)} type="submit" disabled={isJoining || isCreating}>
                         {isJoining ? 'Dołączanie...' : 'Dołącz do lobby'}
-                    </button>
+                        </button>
+                    </Tooltip>
                 </form>
 
                 <div className={styles.lobbyPreview}>
@@ -363,17 +370,17 @@ function Index() {
 
             <nav className={styles.bottom} aria-label="Linki pomocnicze">
                 <ul className={styles.navLinks}>
-                    <li><Link to="/howtoplay">Jak grać?</Link></li>
-                    <li><Link to="/rules">Reguły gry</Link></li>
-                    <li><Link to="/faq">FAQ</Link></li>
-                    <li><Link to="/contact">Kontakt</Link></li>
-                    <li><Link to="/termsofservice">Regulamin</Link></li>
-                    <li><Link to="/privacypolicy">Polityka Prywatność</Link></li>
+                    <li><Tooltip content="Zobacz zasady rozgrywki krok po kroku"><Link to="/howtoplay">Jak grać?</Link></Tooltip></li>
+                    <li><Tooltip content="Sprawdz pelne reguly gry"><Link to="/rules">Reguły gry</Link></Tooltip></li>
+                    <li><Tooltip content="Odpowiedzi na najczestsze pytania"><Link to="/faq">FAQ</Link></Tooltip></li>
+                    <li><Tooltip content="Przejdz do danych kontaktowych"><Link to="/contact">Kontakt</Link></Tooltip></li>
+                    <li><Tooltip content="Przeczytaj regulamin serwisu"><Link to="/termsofservice">Regulamin</Link></Tooltip></li>
+                    <li><Tooltip content="Przeczytaj informacje o prywatnosci"><Link to="/privacypolicy">Polityka Prywatność</Link></Tooltip></li>
                 </ul>
             </nav>
 
             <footer className={styles.footer}>
-                © {currentYear} GuessTheCode - made by <Link to="http://justonemoreif.com">JUST ONE MORE IF</Link>
+                © {currentYear} GuessTheCode - made by <Tooltip content="Otworz strone autora"><Link to="http://justonemoreif.com">JUST ONE MORE IF</Link></Tooltip>
             </footer>
         </div>
     )

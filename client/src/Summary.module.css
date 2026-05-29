@@ -78,6 +78,13 @@
   transform: rotate(-1deg);
 }
 
+.cardinhero{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
 .hero {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;

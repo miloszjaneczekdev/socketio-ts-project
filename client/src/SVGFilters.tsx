@@ -7,7 +7,7 @@ export default function SVGFilters() {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       style={{ display: 'none' }}
-      shapeRendering="geometricPrecision"   // ← DODAJ TU
+      shapeRendering="geometricPrecision"
     >
       <filter id="squiggly-soft" x="-5%" y="-5%" width="110%" height="110%">
         <feTurbulence

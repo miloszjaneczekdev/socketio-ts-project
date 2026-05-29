@@ -12,6 +12,7 @@
 }
 
 :root {
+    --scale-note: 1;
     --clr-paper: #fefdf8;
     --clr-lines: #dedede;
     --clr-border: #444;
@@ -116,11 +117,6 @@ body {
     filter: url(#squiggly-soft);
 }
 
-@media (hover: none) and (pointer: coarse), (max-width: 900px), (prefers-reduced-motion: reduce) {
-    .container {
-        filter: none;
-    }
-}
 
 .loadingMessage {
     display: flex;

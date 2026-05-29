@@ -14,7 +14,7 @@
   pointer-events: none;               /* brak interakcji – nie psuje hovera elementu */
   transform: translate(-50%, -100%);  /* domyślne dla 'top' */
   opacity: 0;
-  animation: tt-fade-in 120ms ease-out forwards;
+  animation: tt-fade-in 150ms ease-out forwards;
   filter: url(#squiggly-soft);
 }
 

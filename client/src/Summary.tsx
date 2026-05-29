@@ -651,7 +651,7 @@ export default function Summary() {
         ) : (
           <>
             <section className={`${styles.card} ${styles.hero}`}>
-              <div>
+              <div className={`${styles.cardinhero}`}>
                 <p className={styles.eyebrow}>Podsumowanie rozgrywki</p>
                 <h1>{winner ? `${winner.name} wygrywa` : 'Koniec gry'}</h1>
                 <p>

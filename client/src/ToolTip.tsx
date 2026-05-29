@@ -28,8 +28,8 @@ export default function Tooltip({
   children,
   content,
   placement = 'top',
-  hoverDelay = 500,
-  focusDelay = 0,
+  hoverDelay = 1500,
+  focusDelay = 1500,
   offset = 8,
   className,
 }: TooltipProps) {
