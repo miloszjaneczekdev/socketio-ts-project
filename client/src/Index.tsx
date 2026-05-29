@@ -10,6 +10,18 @@ import styles from './Index.module.css'
 const RESPONSE_TIMEOUT_MS = 5000
 const CODE_LENGTH = 6
 const EMPTY_CODE = Array(CODE_LENGTH).fill('') as string[]
+const THEME_STORAGE_KEY = 'guess-the-code-theme'
+
+type ThemeMode = 'light' | 'dark'
+
+const getInitialTheme = (): ThemeMode => {
+    if (typeof window === 'undefined') return 'light'
+
+    const savedTheme = window.localStorage.getItem(THEME_STORAGE_KEY)
+    if (savedTheme === 'light' || savedTheme === 'dark') return savedTheme
+
+    return window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+}
 
 function Index() {
     const currentYear = new Date().getFullYear()
@@ -19,10 +31,12 @@ function Index() {
     const [shake, setShake] = useState(false)
     const [errorMsg, setErrorMsg] = useState('')
     const [ph, setPh] = useState<string[]>(EMPTY_CODE)
+    const [themeMode, setThemeMode] = useState<ThemeMode>(getInitialTheme)
 
     const inputRefs = useRef<Array<HTMLInputElement | null>>([])
     const navigate = useNavigate()
     const socket = useContext(SocketContext) as Socket
+    const isDarkMode = themeMode === 'dark'
 
     const prefersReducedMotion = useRef<boolean>(
         typeof window !== 'undefined' &&
@@ -211,6 +225,16 @@ function Index() {
     }, [socket])
 
     useEffect(() => {
+        document.documentElement.dataset.theme = themeMode
+        document.documentElement.style.colorScheme = themeMode
+        window.localStorage.setItem(THEME_STORAGE_KEY, themeMode)
+    }, [themeMode])
+
+    const toggleTheme = () => {
+        setThemeMode((current) => current === 'dark' ? 'light' : 'dark')
+    }
+
+    useEffect(() => {
         if (prefersReducedMotion.current) return
 
         const CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
@@ -274,6 +298,23 @@ function Index() {
 
     return (
         <div className={`${styles.container} container`}>
+            {/* Narazie nie pokazujemy zeby najpierw usprawnic style zeby byly wszystkie kolory w pliku main.css
+            <Tooltip
+                content={isDarkMode ? 'Przelacz na jasny motyw' : 'Przelacz na ciemny motyw'}
+                placement="left"
+            >
+                <button
+                    className={styles.themeToggle}
+                    type="button"
+                    onClick={toggleTheme}
+                    aria-label={isDarkMode ? 'Przelacz na jasny motyw' : 'Przelacz na ciemny motyw'}
+                    aria-pressed={isDarkMode}
+                >
+                    <i className={clsx('fa-solid', isDarkMode ? 'fa-sun' : 'fa-moon')} aria-hidden="true" />
+                </button>
+            </Tooltip>
+            */}
+
             <main id="main" className={styles.main}>
                 <h1 className={styles.logo}>
                     ZGADNIJ <span>KOD</span>
@@ -299,12 +340,12 @@ function Index() {
 
                     <Tooltip content="Utworz nowe lobby i zostan jego hostem" placement="right">
                         <button
-                        className={clsx(styles.btn, styles.green)}
-                        type="button"
-                        onClick={handleCreateLobby}
-                        disabled={isCreating || isJoining}
-                    >
-                        {isCreating ? 'Tworzenie...' : 'Stwórz lobby'}
+                            className={clsx(styles.btn, styles.green)}
+                            type="button"
+                            onClick={handleCreateLobby}
+                            disabled={isCreating || isJoining}
+                        >
+                            {isCreating ? 'Tworzenie...' : 'Stwórz lobby'}
                         </button>
                     </Tooltip>
 
@@ -358,7 +399,7 @@ function Index() {
 
                     <Tooltip content="Dolacz do lobby po wpisaniu 6-znakowego kodu" placement="right">
                         <button className={clsx(styles.btn, styles.blue)} type="submit" disabled={isJoining || isCreating}>
-                        {isJoining ? 'Dołączanie...' : 'Dołącz do lobby'}
+                            {isJoining ? 'Dołączanie...' : 'Dołącz do lobby'}
                         </button>
                     </Tooltip>
                 </form>

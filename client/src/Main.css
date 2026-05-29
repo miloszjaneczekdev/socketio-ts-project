@@ -12,13 +12,18 @@
 }
 
 :root {
+    color-scheme: light;
     --scale-note: 1;
     --clr-paper: #fefdf8;
     --clr-lines: #dedede;
     --clr-border: #444;
+    --clr-placeholder: rgba(68, 68, 68, 0.35);
     --clr-note: #fffad1;
     --clr-note-border: #d5c56e;
     --clr-note-boxshadow: rgba(0, 0, 0, 0.15);
+    --clr-lobby-paper: #d5e0f9;
+    --clr-lobby-paper-dark: #a7bee9;
+    --clr-lobby-transparent: rgba(213, 224, 249, 0);
 
     --green-marker5: rgba(16, 185, 129, .5);
     --blue-marker5: rgba(6, 182, 212, .5);
@@ -71,6 +76,66 @@
     }
 }
 
+:root[data-theme='light'] {
+    color-scheme: light;
+    --clr-paper: #fefdf8;
+    --clr-lines: #dedede;
+    --clr-border: #444;
+    --clr-placeholder: rgba(68, 68, 68, 0.35);
+    --clr-note: #fffad1;
+    --clr-note-border: #d5c56e;
+    --clr-note-boxshadow: rgba(0, 0, 0, 0.15);
+    --clr-lobby-paper: #d5e0f9;
+    --clr-lobby-paper-dark: #a7bee9;
+    --clr-lobby-transparent: rgba(213, 224, 249, 0);
+
+    --green-marker5: rgba(16, 185, 129, .5);
+    --blue-marker5: rgba(6, 182, 212, .5);
+    --red-marker5: rgba(185, 16, 16, .5);
+
+    --green-marker4: rgba(16, 185, 129, .4);
+    --blue-marker4: rgba(6, 182, 212, .4);
+    --red-marker4: rgba(185, 16, 16, .4);
+
+    --green-marker3: rgba(16, 185, 129, .3);
+    --blue-marker3: rgba(6, 182, 212, .3);
+    --red-marker3: rgba(185, 16, 16, .3);
+
+    --box-shadow: #000;
+    --tape-gray: #dbd8be;
+    --tape-edge-gray: #b7b49d;
+}
+
+:root[data-theme='dark'] {
+    color-scheme: dark;
+    --clr-paper: #17191f;
+    --clr-lines: #2a2f3a;
+    --clr-border: #e4e6eb;
+    --clr-placeholder: rgba(228, 230, 235, 0.35);
+    --clr-note: #2d2a1e;
+    --clr-note-border: #b7a750;
+    --clr-note-boxshadow: rgba(0, 0, 0, 0.45);
+    --clr-lobby-paper: #1f344e;
+    --clr-lobby-paper-dark: #4f7aa8;
+    --clr-lobby-transparent: rgba(31, 52, 78, 0);
+
+    --green-marker5: rgba(39, 232, 151, 0.64);
+    --green-marker4: rgba(39, 232, 151, 0.5);
+    --green-marker3: rgba(39, 232, 151, 0.35);
+
+    --blue-marker5: rgba(52, 211, 255, 0.64);
+    --blue-marker4: rgba(52, 211, 255, 0.5);
+    --blue-marker3: rgba(52, 211, 255, 0.35);
+
+    --red-marker5: rgba(255, 104, 104, 0.64);
+    --red-marker4: rgba(255, 104, 104, 0.5);
+    --red-marker3: rgba(255, 104, 104, 0.35);
+
+    --box-shadow: rgba(255, 255, 255, 0.46);
+    --tape-gray: #55594b;
+    --tape-edge-gray: #7d806f;
+}
+
 /* Klasa utility dla dostępności */
 .sr-only {
     position: absolute !important;
@@ -92,6 +157,7 @@ body {
     overflow-x: hidden;
     font-family: "Gloria Hallelujah", cursive;
     background: var(--clr-paper);
+    color: var(--clr-border);
 }
 
 #root {
@@ -125,7 +191,7 @@ body {
     justify-content: center;
     text-align: center;
     font-size: 24px;
-    color: #333;
+    color: var(--clr-border);
 }
 
 ::-webkit-scrollbar {
@@ -133,13 +199,13 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-    background: #f1f1f1;
+    background: var(--clr-paper);
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #888;
+    background: var(--clr-border);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: #555;
+    background: var(--blue-marker5);
 }

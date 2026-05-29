@@ -27,10 +27,10 @@
     height: calc(180px * var(--rotator-scale));
 
     padding: calc(0.75rem * var(--rotator-scale));
-    --paper-color: #d5e0f9;
-    --paper-dark: #a7bee9;
+    --paper-color: var(--clr-lobby-paper, #d5e0f9);
+    --paper-dark: var(--clr-lobby-paper-dark, #a7bee9);
     --shadow-size: calc(3px * var(--rotator-scale));
-    --transparent: rgba(213, 224, 249, 0);
+    --transparent: var(--clr-lobby-transparent, rgba(213, 224, 249, 0));
     border: var(--paper-dark) calc(2px * var(--rotator-scale)) solid;
     background: linear-gradient(to bottom right, var(--paper-dark), 20%, var(--transparent)), var(--paper-color);
     display: flex;
