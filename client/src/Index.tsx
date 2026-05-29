@@ -298,7 +298,7 @@ function Index() {
 
     return (
         <div className={`${styles.container} container`}>
-            {/* Narazie nie pokazujemy zeby najpierw usprawnic style zeby byly wszystkie kolory w pliku main.css
+            
             <Tooltip
                 content={isDarkMode ? 'Przelacz na jasny motyw' : 'Przelacz na ciemny motyw'}
                 placement="left"
@@ -313,7 +313,6 @@ function Index() {
                     <i className={clsx('fa-solid', isDarkMode ? 'fa-sun' : 'fa-moon')} aria-hidden="true" />
                 </button>
             </Tooltip>
-            */}
 
             <main id="main" className={styles.main}>
                 <h1 className={styles.logo}>
@@ -340,12 +339,12 @@ function Index() {
 
                     <Tooltip content="Utworz nowe lobby i zostan jego hostem" placement="right">
                         <button
-                            className={clsx(styles.btn, styles.green)}
-                            type="button"
-                            onClick={handleCreateLobby}
-                            disabled={isCreating || isJoining}
-                        >
-                            {isCreating ? 'Tworzenie...' : 'Stwórz lobby'}
+                        className={clsx(styles.btn, styles.green)}
+                        type="button"
+                        onClick={handleCreateLobby}
+                        disabled={isCreating || isJoining}
+                    >
+                        {isCreating ? 'Tworzenie...' : 'Stwórz lobby'}
                         </button>
                     </Tooltip>
 
@@ -399,7 +398,7 @@ function Index() {
 
                     <Tooltip content="Dolacz do lobby po wpisaniu 6-znakowego kodu" placement="right">
                         <button className={clsx(styles.btn, styles.blue)} type="submit" disabled={isJoining || isCreating}>
-                            {isJoining ? 'Dołączanie...' : 'Dołącz do lobby'}
+                        {isJoining ? 'Dołączanie...' : 'Dołącz do lobby'}
                         </button>
                     </Tooltip>
                 </form>
