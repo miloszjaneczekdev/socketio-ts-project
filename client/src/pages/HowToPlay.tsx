@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import styles from './HowToPlay.module.css'
 import SiteFooter from '../SiteFooter'
+import StickyStack from '../StickyStack'
+import PaperNote from '../PaperNote'
 
 const lobbyOptions = [
   {
@@ -42,7 +44,7 @@ const modeDemos = [
         id: 'solo-1',
         imageSrc: '/how-to-play/solo-1.png',
         imageAlt: 'Tryb Solo: jeden gracz zgaduje kod komputera',
-        durationMs: 5000,
+        durationMs: 6500,
         title: 'Grasz sam przeciwko kodowi komputera.',
         desc: 'Gra generuje sekretny kod, a Ty próbujesz go odgadnąć jak najmniejszą liczbą prób.',
       },
@@ -50,7 +52,7 @@ const modeDemos = [
         id: 'solo-2',
         imageSrc: '/how-to-play/solo-2.png',
         imageAlt: 'Tryb Solo: gracz wpisuje próbę i dostaje podpowiedzi',
-        durationMs: 5000,
+        durationMs: 6500,
         title: 'Wpisujesz próbę i sprawdzasz podpowiedzi.',
         desc: 'Po każdym strzale widzisz, czy znaki są trafione, źle ustawione albo całkiem nietrafione.',
       },
@@ -58,7 +60,7 @@ const modeDemos = [
         id: 'solo-3',
         imageSrc: '/how-to-play/solo-3.png',
         imageAlt: 'Tryb Solo: gracz odgaduje kod i przechodzi do podsumowania',
-        durationMs: 5000,
+        durationMs: 6500,
         title: 'Gdy odgadniesz kod, gra się kończy.',
         desc: 'W historii pojawia się „Odgadnięto!”, a potem przechodzisz do strony podsumowania.',
       },
@@ -71,7 +73,7 @@ const modeDemos = [
         id: 'standard-4p-1',
         imageSrc: '/how-to-play/standard-4p-1.png',
         imageAlt: 'Tryb Standard: czterech graczy, gracz 1 zgaduje kod gracza 2',
-        durationMs: 5200,
+        durationMs: 6200,
         title: 'Czterech graczy gra po kolei.',
         desc: 'Najpierw gracz 1 zgaduje sekretny kod gracza 2.',
       },
@@ -79,7 +81,7 @@ const modeDemos = [
         id: 'standard-4p-2',
         imageSrc: '/how-to-play/standard-4p-2.png',
         imageAlt: 'Tryb Standard: gracz 2 zgaduje kod gracza 3',
-        durationMs: 4700,
+        durationMs: 6500,
         title: 'Po turze pierwszego gracza kolejka przechodzi dalej.',
         desc: 'Teraz gracz 2 próbuje odgadnąć kod gracza 3.',
       },
@@ -87,7 +89,7 @@ const modeDemos = [
         id: 'standard-4p-3',
         imageSrc: '/how-to-play/standard-4p-3.png',
         imageAlt: 'Tryb Standard: gracz 3 zgaduje kod gracza 4',
-        durationMs: 4700,
+        durationMs: 7000,
         title: 'Każdy dostaje swoją turę i swój cel.',
         desc: 'Gracz 3 zgaduje kod gracza 4, a pozostali czekają na swoją kolej.',
       },
@@ -95,7 +97,7 @@ const modeDemos = [
         id: 'standard-4p-4',
         imageSrc: '/how-to-play/standard-4p-4.png',
         imageAlt: 'Tryb Standard: gracz 4 zgaduje kod gracza 1',
-        durationMs: 5200,
+        durationMs: 7000,
         title: 'Po ostatnim graczu kolejka wraca na początek.',
         desc: 'Gracz 4 zgaduje kod gracza 1 i runda może zacząć się od nowa.',
       },
@@ -103,7 +105,7 @@ const modeDemos = [
         id: 'standard-other-order-1',
         imageSrc: '/how-to-play/standard-other-order-1.png',
         imageAlt: 'Tryb Standard: przykład innej kolejności zgadywania',
-        durationMs: 5600,
+        durationMs: 7600,
         title: 'Kolejność nie zawsze musi wyglądać identycznie.',
         desc: 'Jeśli w lobby ustawisz inną kolejność, gra dopasuje cele do wybranego ustawienia.',
       },
@@ -111,7 +113,7 @@ const modeDemos = [
         id: 'standard-other-order-2',
         imageSrc: '/how-to-play/standard-other-order-2.png',
         imageAlt: 'Tryb Standard: drugi przykład innej kolejności graczy',
-        durationMs: 5400,
+        durationMs: 7200,
         title: 'Możesz grać stałą, losową albo zmienianą kolejnością.',
         desc: 'Dzięki temu Standard może być spokojny albo bardziej nieprzewidywalny.',
       },
@@ -119,7 +121,7 @@ const modeDemos = [
         id: 'standard-3p',
         imageSrc: '/how-to-play/standard-3p.png',
         imageAlt: 'Tryb Standard: trzech graczy',
-        durationMs: 5000,
+        durationMs: 6500,
         title: 'Mniej graczy? Nie ma problemu.',
         desc: 'Przy trzech graczach kolejka dalej działa normalnie: każdy zgaduje następny cel.',
       },
@@ -127,7 +129,7 @@ const modeDemos = [
         id: 'standard-2p',
         imageSrc: '/how-to-play/standard-2p.png',
         imageAlt: 'Tryb Standard: dwóch graczy',
-        durationMs: 5000,
+        durationMs: 7000,
         title: 'Możecie grać nawet we dwóch.',
         desc: 'Wtedy gracze zgadują swoje kody na zmianę: gracz 1 celuje w gracza 2, a potem odwrotnie.',
       },
@@ -140,7 +142,7 @@ const modeDemos = [
         id: 'turbo-1',
         imageSrc: '/how-to-play/turbo-1.png',
         imageAlt: 'Tryb Turbo: szybkie tempo i krótki czas na decyzję',
-        durationMs: 5000,
+        durationMs: 8500,
         title: 'W Turbo liczy się tempo.',
         desc: 'Rozgrywka jest szybsza niż w trybie standardowym. Masz mniej czasu na analizę, więc trzeba szybko podejmować decyzje i sprawnie wpisywać próby.',
       },
@@ -148,7 +150,7 @@ const modeDemos = [
         id: 'turbo-2',
         imageSrc: '/how-to-play/turbo-2.png',
         imageAlt: 'Tryb Turbo: wszyscy gracze zgadują równocześnie',
-        durationMs: 5000,
+        durationMs: 7000,
         title: 'Wszyscy zgadują równocześnie.',
         desc: 'Nie ma klasycznej kolejki. Każdy gracz oddaje strzał w tym samym czasie, więc nikt nie czeka na swoją turę.',
       },
@@ -160,26 +162,26 @@ const modeDemos = [
       {
         id: 'coop-1',
         imageSrc: '/how-to-play/coop-1.png',
-        imageAlt: 'Tryb Wspólne zgadywanie: jeden gracz jest celem',
-        durationMs: 5000,
-        title: 'Jeden gracz jest aktualnym celem.',
-        desc: 'Ten gracz czeka, a pozostali próbują razem odgadnąć jego sekretny kod.',
+        imageAlt: 'Tryb Wspólne zgadywanie: wszyscy gracze zgadują kod jednego celu',
+        durationMs: 8000,
+        title: 'Wszyscy mają ten sam cel.',
+        desc: 'W każdej rundzie jeden gracz zostaje celem. Pozostali gracze osobno zgadują jego kod i każdy oddaje własne próby.',
       },
       {
         id: 'coop-2',
         imageSrc: '/how-to-play/coop-2.png',
-        imageAlt: 'Tryb Wspólne zgadywanie: kilku graczy zgaduje ten sam kod',
-        durationMs: 5000,
-        title: 'Reszta graczy zgaduje równocześnie.',
-        desc: 'Każdy strzał daje drużynie informacje, które mogą pomóc przy kolejnych próbach.',
+        imageAlt: 'Tryb Wspólne zgadywanie: cel zmienia się co rundę',
+        durationMs: 7600,
+        title: 'Cel zmienia się co rundę.',
+        desc: 'Najpierw zgadywany jest kod Gracza 1, w kolejnej rundzie kod Gracza 2, potem Gracza 3 i tak dalej w kółko.',
       },
       {
         id: 'coop-3',
         imageSrc: '/how-to-play/coop-3.png',
-        imageAlt: 'Tryb Wspólne zgadywanie: gra przechodzi do kolejnego celu',
-        durationMs: 5000,
-        title: 'Po rozwiązaniu celu gra przechodzi dalej.',
-        desc: 'Gdy kod jednego gracza zostanie odgadnięty, kolejnym celem zostaje następny gracz.',
+        imageAlt: 'Tryb Wspólne zgadywanie: minimum trzech graczy',
+        durationMs: 7000,
+        title: 'Minimum 3 graczy.',
+        desc: 'Ten tryb ma sens od 3 osób. Przy dwóch graczach działałby prawie tak samo jak tryb standardowy.',
       },
     ],
   },
@@ -189,29 +191,37 @@ const modeDemos = [
       {
         id: 'ffa-1',
         imageSrc: '/how-to-play/ffa-1.png',
-        imageAlt: 'Tryb Każdy każdego: wielu graczy zgaduje różne cele',
-        durationMs: 5000,
-        title: 'Każdy próbuje odgadnąć każdego.',
-        desc: 'Ten tryb działa dla większej liczby graczy i daje więcej celów do rozwiązania.',
+        imageAlt: 'Tryb Każdy każdego: kolorowe strzałki pokazują kolejne tury zgadywania między wszystkimi graczami',
+        durationMs: 8200,
+        title: 'Każdy gracz zgaduje kod każdego z pozostałych.',
+        desc: 'Czerwone strzałki pokazują pierwszą turę, niebieskie drugą, a zielone trzecią. Potem układ powtarza się w kółko.',
       },
       {
         id: 'ffa-2',
         imageSrc: '/how-to-play/ffa-2.png',
-        imageAlt: 'Tryb Każdy każdego: gracz ma kilka celów',
-        durationMs: 5000,
-        title: 'Masz osobną historię dla każdego celu.',
-        desc: 'Możesz śledzić, które kody już rozgryzłeś, a które nadal wymagają kolejnych prób.',
+        imageAlt: 'Tryb Każdy każdego: osobna historia prób dla każdego przeciwnika',
+        durationMs: 7800,
+        title: 'Każdy cel ma osobną historię.',
+        desc: 'Dla każdego przeciwnika widzisz oddzielne próby i podpowiedzi, więc łatwiej śledzić, który kod już prawie rozgryzłeś.',
       },
       {
         id: 'ffa-3',
         imageSrc: '/how-to-play/ffa-3.png',
-        imageAlt: 'Tryb Każdy każdego: odgadnięty cel w historii',
-        durationMs: 5000,
-        title: 'Odgadnięty kod zostaje oznaczony w historii.',
-        desc: 'Gdy rozwiążesz kod konkretnego gracza, przy jego historii pojawi się „Odgadnięto!”.',
+        imageAlt: 'Tryb Każdy każdego: minimum trzech graczy',
+        durationMs: 7400,
+        title: 'Minimum 3 graczy.',
+        desc: 'Ten tryb ma sens od 3 osób, tak jak tryb Wspólne Zgadywanie. Przy dwóch graczach działałby prawie tak samo jak tryb standardowy.',
       },
+      {
+        id: 'ffa-4',
+        imageSrc: '/how-to-play/ffa-4.png',
+        imageAlt: 'Tryb Każdy każdego: wygrywa gracz, który najlepiej odgaduje kody',
+        durationMs: 6500,
+        title: 'Wygrywa najlepszy łamacz kodów.',
+        desc: 'Liczy się skuteczne zgadywanie wielu przeciwników, a nie tylko jednego celu.',
+      }
     ],
-  },
+  }
 ]
 
 const playerTypes = [
@@ -298,6 +308,11 @@ type StartDemoFocus = 'create' | 'join' | number | null
 
 const START_DEMO_EMPTY_CODE = Array(6).fill('') as string[]
 const START_DEMO_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+const START_DEMO_TYPE_MS = 36
+const START_DEMO_ERASE_MS = 18
+const START_DEMO_BUTTON_PRESS_MS = 520
+const START_DEMO_CODE_PRESS_MS = 520
+const START_DEMO_STEP_PAUSE_MS = 620
 
 const startDemoTexts = {
   create: 'Chcesz stworzyć lobby? Kliknij zielony przycisk i utwórz nowy pokój gry.',
@@ -388,6 +403,376 @@ function ModeDemoCard({ demo }: { demo: (typeof modeDemos)[number] }) {
   )
 }
 
+const SECRET_DEMO_KEYS = [...'1234567890']
+const SECRET_DEMO_CODES = ['4827', '1904', '6631', '0589']
+const SECRET_DEMO_TIMER_TICK_MS = 50
+
+function makeSecretDemoCode(seed: number) {
+  return Array.from({ length: 4 }, (_, index) => String((seed * 3 + index * 2 + 1) % 10)).join('')
+}
+
+function SecretCodeDemo() {
+  const [code, setCode] = useState<string[]>(Array(4).fill(''))
+  const [activeKey, setActiveKey] = useState<string | null>(null)
+  const [activeCodeIndex, setActiveCodeIndex] = useState<number | null>(null)
+  const [timeLeft, setTimeLeft] = useState(10)
+  const [timerRunning, setTimerRunning] = useState(false)
+  const [message, setMessage] = useState('Ustaw szybko swój kod, czas leci!')
+  const [isSubmitted, setIsSubmitted] = useState(false)
+
+  useEffect(() => {
+    if (!timerRunning) return undefined
+
+    const intervalId = window.setInterval(() => {
+      setTimeLeft((current) => Math.max(0, current - SECRET_DEMO_TIMER_TICK_MS / 1000))
+    }, SECRET_DEMO_TIMER_TICK_MS)
+
+    return () => window.clearInterval(intervalId)
+  }, [timerRunning])
+
+  useEffect(() => {
+    let cancelled = false
+
+    const sleep = (ms: number) => new Promise<void>((resolve) => {
+      window.setTimeout(resolve, ms)
+    })
+
+    const resetDemo = (seconds: number, nextMessage: string) => {
+      setCode(Array(4).fill(''))
+      setActiveKey(null)
+      setActiveCodeIndex(null)
+      setTimeLeft(seconds)
+      setTimerRunning(true)
+      setMessage(nextMessage)
+      setIsSubmitted(false)
+    }
+
+    const pressKey = async (key: string, delayMs = 520) => {
+      setActiveKey(key)
+      await sleep(delayMs)
+      if (cancelled) return
+      setActiveKey(null)
+    }
+
+    const runTypedCode = async (nextCode: string) => {
+      resetDemo(10, 'Ustaw szybko swój kod, czas leci!')
+      await sleep(1100)
+
+      for (let i = 0; i < nextCode.length; i += 1) {
+        if (cancelled) return
+        setActiveCodeIndex(i)
+        await pressKey(nextCode[i])
+        if (cancelled) return
+
+        setCode((current) => {
+          const updated = [...current]
+          updated[i] = nextCode[i]
+          return updated
+        })
+        await sleep(620)
+      }
+
+      if (cancelled) return
+      setActiveCodeIndex(null)
+      await pressKey('OK', 650)
+      setTimerRunning(false)
+      setIsSubmitted(true)
+      setMessage(`Kod ustawiony: ${nextCode}`)
+      await sleep(3400)
+    }
+
+    const runTimeoutCode = async (cycle: number) => {
+      resetDemo(5, 'Ustaw szybko swój kod, czas leci!')
+      await sleep(1200)
+
+      await sleep(5000)
+
+      if (cancelled) return
+      setTimerRunning(false)
+      setTimeLeft(0)
+      const generatedCode = makeSecretDemoCode(cycle)
+      setCode(generatedCode.split(''))
+      setActiveCodeIndex(null)
+      setIsSubmitted(true)
+      setMessage('Nie zdążyłeś? Nie ma problemu, wygenerował się losowy kod.')
+      await sleep(4200)
+    }
+
+    const runDemo = async () => {
+      let cycle = 0
+
+      while (!cancelled) {
+        await runTypedCode(SECRET_DEMO_CODES[cycle % SECRET_DEMO_CODES.length])
+        if (cancelled) return
+        await runTimeoutCode(cycle + 1)
+        cycle += 1
+        await sleep(1300)
+      }
+    }
+
+    runDemo()
+
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  return (
+    <div className={styles.secretSetupDemo} aria-label="Animacja ustawiania sekretnego kodu">
+      <div className={styles.secretTimer}>
+        <span>Pozostało</span>
+        <strong>{timeLeft.toFixed(2)}s</strong>
+      </div>
+
+      <p className={`${styles.secretDemoMessage} ${isSubmitted ? styles.secretDemoMessageDone : ''}`} aria-live="polite">
+        {message}
+      </p>
+
+      <div className={styles.secretCodeDisplay}>
+        {code.map((char, index) => (
+          <span
+            key={`secret-code-${index}`}
+            className={[
+              styles.secretCodeInput,
+              char ? styles.secretCodeInputFilled : '',
+              isSubmitted && char ? styles.secretCodeInputReady : '',
+              activeCodeIndex === index ? styles.demoFocus : '',
+            ].filter(Boolean).join(' ')}
+          >
+            {char || ''}
+          </span>
+        ))}
+      </div>
+
+      <div className={styles.secretKeyboard}>
+        {SECRET_DEMO_KEYS.map((key) => (
+          <button
+            key={key}
+            type="button"
+            className={[
+              styles.secretKeyboardButton,
+              styles.secretNumberButton,
+              activeKey === key ? styles.secretKeyboardButtonPressed : '',
+              activeKey === key ? styles.demoFocus : '',
+            ].filter(Boolean).join(' ')}
+            tabIndex={-1}
+          >
+            {key}
+          </button>
+        ))}
+        <button
+          type="button"
+          className={`${styles.secretKeyboardButton} ${styles.secretBackspaceButton}`}
+          tabIndex={-1}
+        >
+          ←
+        </button>
+        <button
+          type="button"
+          className={[
+            styles.secretKeyboardButton,
+            styles.secretSubmitButton,
+            isSubmitted ? styles.secretSubmitButtonReady : '',
+            activeKey === 'OK' ? styles.secretKeyboardButtonPressed : '',
+            activeKey === 'OK' ? styles.demoFocus : '',
+          ].filter(Boolean).join(' ')}
+          tabIndex={-1}
+        >
+          OK
+        </button>
+      </div>
+    </div>
+  )
+}
+
+const GUESS_DEMO_CODES = ['7391', '2048', '6150']
+
+type GuessDemoHistoryItem = {
+  id: string
+  guess: string
+  hint: string
+}
+
+function GuessInputDemo() {
+  const [guess, setGuess] = useState<string[]>(Array(4).fill(''))
+  const [activeKey, setActiveKey] = useState<string | null>(null)
+  const [activeCodeIndex, setActiveCodeIndex] = useState<number | null>(null)
+  const [isSubmitted, setIsSubmitted] = useState(false)
+  const [message, setMessage] = useState('Wpisz próbę i zatwierdź ją przyciskiem OK.')
+  const [history, setHistory] = useState<GuessDemoHistoryItem[]>([])
+
+  useEffect(() => {
+    let cancelled = false
+
+    const sleep = (ms: number) => new Promise<void>((resolve) => {
+      window.setTimeout(resolve, ms)
+    })
+
+    const pressKey = async (key: string, delayMs = 520) => {
+      setActiveKey(key)
+      await sleep(delayMs)
+      if (cancelled) return
+      setActiveKey(null)
+    }
+
+    const runGuess = async (nextGuess: string, shotNumber: number) => {
+      setGuess(Array(4).fill(''))
+      setActiveKey(null)
+      setActiveCodeIndex(null)
+      setIsSubmitted(false)
+      setMessage(`Strzał ${shotNumber}: wpisz próbę i zatwierdź OK.`)
+      await sleep(1000)
+
+      for (let i = 0; i < nextGuess.length; i += 1) {
+        if (cancelled) return
+        setActiveCodeIndex(i)
+        await pressKey(nextGuess[i])
+        if (cancelled) return
+
+        setGuess((current) => {
+          const updated = [...current]
+          updated[i] = nextGuess[i]
+          return updated
+        })
+
+        await sleep(620)
+      }
+
+      if (cancelled) return
+      setActiveCodeIndex(null)
+      await pressKey('OK', 650)
+      setIsSubmitted(true)
+      setHistory((current) => [
+        {
+          id: `${Date.now()}-${nextGuess}`,
+          guess: nextGuess,
+          hint: shotNumber === 1 ? '1 dobre miejsce' : '2 dobre znaki',
+        },
+        ...current,
+      ].slice(0, 2))
+      setMessage(`Próba ${nextGuess} trafiła do historii.`)
+      await sleep(3200)
+    }
+
+    const runDemo = async () => {
+      let cycle = 0
+
+      while (!cancelled) {
+        setHistory([])
+        await runGuess(GUESS_DEMO_CODES[cycle % GUESS_DEMO_CODES.length], 1)
+        if (cancelled) return
+        await runGuess(GUESS_DEMO_CODES[(cycle + 1) % GUESS_DEMO_CODES.length], 2)
+        if (cancelled) return
+        setMessage('Historia ma dwa strzały. Za chwilę zaczynamy od nowa.')
+        await sleep(2300)
+        setGuess(Array(4).fill(''))
+        setIsSubmitted(false)
+        setHistory([])
+        cycle += 2
+        await sleep(1000)
+      }
+    }
+
+    runDemo()
+
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  return (
+    <div className={styles.guessInputDemo} aria-label="Animacja wpisywania próby i historii strzałów">
+      <div className={styles.guessInputPanel}>
+        <p className={`${styles.secretDemoMessage} ${isSubmitted ? styles.secretDemoMessageDone : ''}`} aria-live="polite">
+          {message}
+        </p>
+
+        <div className={styles.secretCodeDisplay}>
+          {guess.map((char, index) => (
+            <span
+              key={`guess-code-${index}`}
+              className={[
+                styles.secretCodeInput,
+                char ? styles.secretCodeInputFilled : '',
+                isSubmitted && char ? styles.secretCodeInputReady : '',
+                activeCodeIndex === index ? styles.demoFocus : '',
+              ].filter(Boolean).join(' ')}
+            >
+              {char || ''}
+            </span>
+          ))}
+        </div>
+
+        <div className={styles.secretKeyboard}>
+          {SECRET_DEMO_KEYS.map((key) => (
+            <button
+              key={key}
+              type="button"
+              className={[
+                styles.secretKeyboardButton,
+                styles.secretNumberButton,
+                activeKey === key ? styles.secretKeyboardButtonPressed : '',
+                activeKey === key ? styles.demoFocus : '',
+              ].filter(Boolean).join(' ')}
+              tabIndex={-1}
+            >
+              {key}
+            </button>
+          ))}
+          <button
+            type="button"
+            className={`${styles.secretKeyboardButton} ${styles.secretBackspaceButton}`}
+            tabIndex={-1}
+          >
+            ←
+          </button>
+          <button
+            type="button"
+            className={[
+              styles.secretKeyboardButton,
+              styles.secretSubmitButton,
+              isSubmitted ? styles.secretSubmitButtonReady : '',
+              activeKey === 'OK' ? styles.secretKeyboardButtonPressed : '',
+              activeKey === 'OK' ? styles.demoFocus : '',
+            ].filter(Boolean).join(' ')}
+            tabIndex={-1}
+          >
+            OK
+          </button>
+        </div>
+      </div>
+
+      <div className={styles.guessHistoryDemo} aria-label="Historia dwóch przykładowych strzałów">
+        <StickyStack
+          items={history}
+          getId={(item) => item.id}
+          className={styles.guessHistoryStack}
+          renderItem={(item, index, array) => (
+            <div>
+              <span
+                style={{
+                  position: 'absolute',
+                  fontSize: '4rem',
+                  bottom: '-35px',
+                  left: '-2px',
+                  opacity: 0.5,
+                  color: 'white',
+                  zIndex: -1,
+                }}
+              >
+                {array.length - index}
+              </span>
+              <strong>{item.guess}</strong>
+              <br />
+              <span>{item.hint}</span>
+            </div>
+          )}
+        />
+      </div>
+    </div>
+  )
+}
+
 function HowToPlay() {
   const navigate = useNavigate()
   const leaveBtnText = '← Wróć'
@@ -397,6 +782,7 @@ function HowToPlay() {
   const [startDemoAction, setStartDemoAction] = useState<StartDemoAction>(null)
   const [startDemoFocus, setStartDemoFocus] = useState<StartDemoFocus>(null)
   const [startDemoHidden, setStartDemoHidden] = useState(false)
+  const [showFloatingBack, setShowFloatingBack] = useState(false)
 
   const onLeaveIntent = () => {
     navigate('/')
@@ -415,7 +801,7 @@ function HowToPlay() {
       for (let i = 1; i <= text.length; i += 1) {
         if (cancelled) return
         setStartDemoText(text.slice(0, i))
-        await sleep(26)
+        await sleep(START_DEMO_TYPE_MS)
       }
     }
 
@@ -423,7 +809,7 @@ function HowToPlay() {
       for (let i = text.length - 1; i >= 0; i -= 1) {
         if (cancelled) return
         setStartDemoText(text.slice(0, i))
-        await sleep(12)
+        await sleep(START_DEMO_ERASE_MS)
       }
     }
 
@@ -435,15 +821,12 @@ function HowToPlay() {
 
     const pressDemoButton = async (button: Exclude<StartDemoAction, null>) => {
       setStartDemoFocus(button)
-      await sleep(320)
-      if (cancelled) return
-
       setStartDemoAction(button)
-      await sleep(260)
+      await sleep(START_DEMO_BUTTON_PRESS_MS)
       if (cancelled) return
 
       setStartDemoAction(null)
-      await clearDemoFocus(360)
+      await clearDemoFocus(START_DEMO_BUTTON_PRESS_MS)
     }
 
     const hideStartDemo = async (options?: { clearCodeWhileHidden?: boolean }) => {
@@ -472,17 +855,14 @@ function HowToPlay() {
         if (cancelled) return
 
         setStartDemoFocus(i)
-        await sleep(260)
-        if (cancelled) return
-
         setStartDemoCode((current) => {
           const updated = [...current]
           updated[i] = code[i]
           return updated
         })
 
-        await clearDemoFocus(260)
-        await sleep(70)
+        await clearDemoFocus(START_DEMO_CODE_PRESS_MS)
+        await sleep(START_DEMO_STEP_PAUSE_MS)
       }
     }
 
@@ -491,31 +871,31 @@ function HowToPlay() {
         setStartDemoCode(START_DEMO_EMPTY_CODE)
 
         await typeText(startDemoTexts.create)
-        await sleep(650)
+        await sleep(1100)
         if (cancelled) return
         await pressDemoButton('create')
-        await sleep(1000)
+        await sleep(1300)
         if (cancelled) return
         await Promise.all([
           hideStartDemo(),
           eraseText(startDemoTexts.create),
         ])
-        await sleep(300)
+        await sleep(700)
 
         await typeText(startDemoTexts.join)
-        await sleep(400)
+        await sleep(1100)
         await typeCode(makeRandomLobbyCode())
-        await sleep(500)
+        await sleep(1100)
         if (cancelled) return
         await pressDemoButton('join')
-        await sleep(1000)
+        await sleep(1300)
         if (cancelled) return
         await Promise.all([
           hideStartDemo({ clearCodeWhileHidden: true }),
           eraseText(startDemoTexts.join),
         ])
         setStartDemoFocus(null)
-        await sleep(500)
+        await sleep(1300)
       }
     }
 
@@ -526,8 +906,42 @@ function HowToPlay() {
     }
   }, [])
 
+  useEffect(() => {
+    const getScrollTop = () => (
+      window.scrollY ||
+      document.scrollingElement?.scrollTop ||
+      document.documentElement.scrollTop ||
+      document.body.scrollTop ||
+      0
+    )
+
+    const onScroll = () => {
+      setShowFloatingBack(getScrollTop() > 180)
+    }
+
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    document.addEventListener('scroll', onScroll, { passive: true, capture: true })
+
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      document.removeEventListener('scroll', onScroll, { capture: true })
+    }
+  }, [])
+
   return (
-    <div className={`${styles.page} container`}>
+    <>
+      {showFloatingBack && (
+        <button
+          type="button"
+          className={styles.floatingBackBtn}
+          onClick={onLeaveIntent}
+        >
+          ← Wróć
+        </button>
+      )}
+
+      <div className={`${styles.page} container`}>
       <div className={styles.logo}>
         <Link
           className={styles.logoLogo}
@@ -611,7 +1025,6 @@ function HowToPlay() {
                 <div className={styles.startRight}>
                   <p className={styles.startTypingText} aria-live="polite">
                     {startDemoText}
-                    <span className={styles.typeCursor} aria-hidden="true">|</span>
                   </p>
                 </div>
               </div>
@@ -679,13 +1092,13 @@ function HowToPlay() {
                 ))}
               </div>
 
-              <div className={styles.warningBox}>
+              <PaperNote color="yellow">
                 <strong>Nie podglądaj!</strong>
                 <p>
                   W Hot Seat ekran gotowości oznacza, że zaraz gra aktywny gracz. Pozostali powinni odwrócić wzrok,
                   żeby nie zobaczyć jego kodu, strzału albo historii.
                 </p>
-              </div>
+              </PaperNote>
             </div>
           </section>
 
@@ -709,12 +1122,7 @@ function HowToPlay() {
                 Jeśli ktoś nie zdąży ustawić kodu przed końcem czasu, gra może ustawić losowy kod automatycznie.
               </p>
 
-              <div className={styles.secretDemo} aria-label="Ukryty sekretny kod">
-                <span>•</span>
-                <span>•</span>
-                <span>•</span>
-                <span>•</span>
-              </div>
+              <SecretCodeDemo />
             </div>
           </section>
 
@@ -759,16 +1167,7 @@ function HowToPlay() {
                 aktywny gracz może zatwierdzić próbę.
               </p>
 
-              <div className={styles.guessRow} aria-label="Przykładowa próba">
-                <span>A</span>
-                <span>7</span>
-                <span>B</span>
-                <span>9</span>
-
-                <button type="button" className={styles.okBtn}>
-                  OK
-                </button>
-              </div>
+              <GuessInputDemo />
             </div>
           </section>
 
@@ -855,10 +1254,10 @@ function HowToPlay() {
                 ))}
               </ul>
 
-              <div className={styles.noteBox}>
+              <PaperNote color="blue">
                 <strong>Ważne:</strong> w trybach z wieloma celami, np. Każdy każdego, historia może być osobna dla
                 każdego gracza, którego próbujesz odgadnąć.
-              </div>
+              </PaperNote>
             </div>
           </section>
 
@@ -876,10 +1275,10 @@ function HowToPlay() {
                 <li>W trybach z wieloma celami liczy się rozwiązanie wszystkich wymaganych kodów.</li>
               </ul>
 
-              <div className={styles.tipBox}>
+              <PaperNote color="green">
                 <strong>Wskazówka:</strong> jeśli nie znasz jeszcze trybów, najlepiej zacznij od
                 <span> Standard</span>.
-              </div>
+              </PaperNote>
             </div>
           </section>
         </main>
@@ -887,6 +1286,7 @@ function HowToPlay() {
         <SiteFooter />
       </div>
     </div>
+    </>
   )
 }
 

@@ -1,6 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom'
 import styles from './TermsOfService.module.css'
 import SiteFooter from '../SiteFooter'
+import PaperNote from '../PaperNote'
 
 const OWNER_LABEL = 'osoba prywatna'
 const CONTACT_PATH = '/contact'
@@ -98,13 +99,13 @@ function TermsOfService() {
                 Ten regulamin opisuje podstawowe zasady korzystania z gry <strong>Zgadnij Kod</strong>. Gra jest projektem rozrywkowym prowadzonym przez właściciela jako {OWNER_LABEL}.
               </p>
 
-              <div className={styles.noteBox}>
+              <PaperNote color="blue">
                 <strong>Kontakt z właścicielem</strong>
                 <p>
                   W sprawach dotyczących gry, błędów, pomysłów lub regulaminu możesz skorzystać ze strony{' '}
                   <Link className={styles.inlineLink} to={CONTACT_PATH}>Kontakt</Link>.
                 </p>
-              </div>
+              </PaperNote>
             </div>
           </section>
 
@@ -145,14 +146,14 @@ function TermsOfService() {
                 ))}
               </div>
 
-              <div className={styles.tipBox}>
+              <PaperNote color="green">
                 <strong>Gdzie sprawdzić zasady rozgrywki?</strong>
                 <span>
                   {' '}Szczegółowe działanie trybów i ekranów gry znajdziesz w zakładce{' '}
                   <Link className={styles.inlineLink} to="/howtoplay">Jak grać?</Link> oraz w{' '}
                   <Link className={styles.inlineLink} to="/rules">Regułach gry</Link>.
                 </span>
-              </div>
+              </PaperNote>
             </div>
           </section>
 
@@ -166,12 +167,12 @@ function TermsOfService() {
                 Podczas korzystania z gry zabronione jest działanie na szkodę innych graczy, właściciela projektu lub samej aplikacji.
               </p>
 
-              <div className={styles.warningBox}>
+              <PaperNote color="red">
                 <strong>Zabronione działania</strong>
                 <p>
                   Nie używaj gry do obrażania, nękania, spamowania, obchodzenia mechanik, automatyzowania akcji albo celowego zakłócania działania lobby i serwera.
                 </p>
-              </div>
+              </PaperNote>
             </div>
           </section>
 
@@ -231,10 +232,10 @@ function TermsOfService() {
                 Regulamin może zostać zaktualizowany, jeśli zmienią się funkcje gry, sposób działania aplikacji albo zasady korzystania z projektu.
               </p>
 
-              <div className={styles.noteBox}>
+              <PaperNote color="yellow">
                 <strong>Ostatnia aktualizacja:</strong>
                 <p>{LAST_UPDATED}</p>
-              </div>
+              </PaperNote>
             </div>
           </section>
         </main>

@@ -1,6 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom'
 import styles from './FAQ.module.css'
 import SiteFooter from '../SiteFooter'
+import PaperNote from '../PaperNote'
 
 const generalQuestions = [
   {
@@ -184,13 +185,13 @@ function FAQ() {
                 ))}
               </div>
 
-              <div className={styles.warningBox}>
+              <PaperNote color="red">
                 <strong>Nadal masz problem?</strong>
                 <p>
                   Opisz, co się stało, jaki tryb był wybrany i czy pojawił się komunikat błędu. Potem przejdź do strony{' '}
                   <Link className={styles.inlineLink} to="/contact">Kontakt</Link>.
                 </p>
-              </div>
+              </PaperNote>
             </div>
           </section>
         </main>

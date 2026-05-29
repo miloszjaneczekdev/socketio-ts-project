@@ -1,6 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom'
 import styles from './Contact.module.css'
 import SiteFooter from '../SiteFooter'
+import PaperNote from '../PaperNote'
 
 const CONTACT_EMAIL = 'twoj-email@example.com'
 
@@ -81,12 +82,12 @@ function Contact() {
                 <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
               </div>
 
-              <div className={styles.noteBox}>
+              <PaperNote color="yellow">
                 <strong>Ważne:</strong>
                 <p>
                   Podmień adres <span>{CONTACT_EMAIL}</span> na swój prawdziwy adres kontaktowy przed publikacją strony.
                 </p>
-              </div>
+              </PaperNote>
             </div>
           </section>
 

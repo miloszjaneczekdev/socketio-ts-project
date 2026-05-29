@@ -1,6 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom'
 import styles from './PrivacyPolicy.module.css'
 import SiteFooter from '../SiteFooter'
+import PaperNote from '../PaperNote'
 
 const OWNER_LABEL = 'osoba prywatna'
 const CONTACT_PATH = '/contact'
@@ -99,13 +100,13 @@ function PrivacyPolicy() {
                 Ta polityka prywatności opisuje, jakie dane mogą być przetwarzane podczas korzystania z gry <strong>Guess The Code</strong>. Projekt jest prowadzony przez właściciela jako {OWNER_LABEL}.
               </p>
 
-              <div className={styles.noteBox}>
+              <PaperNote color="blue">
                 <strong>Kontakt w sprawach prywatności</strong>
                 <p>
                   W sprawach dotyczących danych lub prywatności możesz skorzystać ze strony{' '}
                   <Link className={styles.inlineLink} to={CONTACT_PATH}>Kontakt</Link>.
                 </p>
-              </div>
+              </PaperNote>
             </div>
           </section>
 
@@ -178,12 +179,12 @@ function PrivacyPolicy() {
                 ))}
               </ul>
 
-              <div className={styles.warningBox}>
+              <PaperNote color="red">
                 <strong>Ważne</strong>
                 <p>
                   Gra nie powinna prosić o hasła do kont, dane płatnicze ani inne wrażliwe informacje. Nie wpisuj takich danych w nazwie gracza, kodzie lobby ani innych polach gry.
                 </p>
-              </div>
+              </PaperNote>
             </div>
           </section>
 
@@ -197,10 +198,6 @@ function PrivacyPolicy() {
                 Jeśli aplikacja nie korzysta z cookies, reklam ani narzędzi analitycznych, ta część ma charakter informacyjny. Jeśli w przyszłości dodasz takie narzędzia, politykę prywatności trzeba uzupełnić o ich nazwy, cel działania i zakres zbieranych danych.
               </p>
 
-              <div className={styles.tipBox}>
-                <strong>Przykłady do uzupełnienia w przyszłości:</strong>
-                <span> hosting, analityka, monitoring błędów, logi serwera, formularz kontaktowy lub zewnętrzna usługa pocztowa.</span>
-              </div>
             </div>
           </section>
 
@@ -232,10 +229,10 @@ function PrivacyPolicy() {
                 Ta polityka może zostać zaktualizowana, jeśli zmieni się sposób działania gry, hosting, formularz kontaktowy, analityka, logi lub inne funkcje związane z danymi.
               </p>
 
-              <div className={styles.noteBox}>
+              <PaperNote color="yellow">
                 <strong>Ostatnia aktualizacja:</strong>
                 <p>{LAST_UPDATED}</p>
-              </div>
+              </PaperNote>
             </div>
           </section>
         </main>

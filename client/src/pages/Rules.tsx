@@ -1,6 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom'
 import styles from './Rules.module.css'
 import SiteFooter from '../SiteFooter'
+import PaperNote from '../PaperNote'
 
 const basicRules = [
   'Każdy gracz ustawia swój tajny kod, którego inni gracze nie mogą zobaczyć.',
@@ -104,12 +105,12 @@ function Rules() {
                 Celem gry jest odgadnięcie tajnego kodu przeciwnika, komputera albo aktualnego celu szybciej i skuteczniej niż inni gracze.
               </p>
 
-              <div className={styles.goalBox}>
+              <PaperNote color="yellow">
                 <strong>Najważniejsze:</strong>
                 <p>
                   Ustaw swój kod, nie pokazuj go innym, analizuj podpowiedzi i wykorzystuj historię prób, żeby znaleźć poprawne rozwiązanie.
                 </p>
-              </div>
+              </PaperNote>
             </div>
           </section>
 
@@ -184,13 +185,13 @@ function Rules() {
                 Wybrany tryb może zmieniać kolejność tur, liczbę celów, współpracę między graczami oraz moment zakończenia rozgrywki.
               </p>
 
-              <div className={styles.noteBox}>
+              <PaperNote color="blue">
                 <strong>Nie powtarzamy tu całego poradnika.</strong>
                 <p>
                   Dokładne działanie trybów, takich jak Solo, Standard, Turbo, Wspólne zgadywanie i Każdy każdego, znajdziesz w zakładce{' '}
                   <Link className={styles.inlineLink} to="/howtoplay">Jak grać?</Link>.
                 </p>
-              </div>
+              </PaperNote>
             </div>
           </section>
 
@@ -204,12 +205,12 @@ function Rules() {
                 Jeśli w lobby ustawiony jest limit czasu, gracz powinien wykonać swoją akcję przed jego końcem.
               </p>
 
-              <div className={styles.warningBox}>
+              <PaperNote color="red">
                 <strong>Po upływie czasu</strong>
                 <p>
                   Gra może wykonać akcję automatycznie, np. pusty strzał, losowy strzał albo losowy kod. Zależy to od ustawień wybranych w lobby.
                 </p>
-              </div>
+              </PaperNote>
             </div>
           </section>
 
@@ -225,9 +226,9 @@ function Rules() {
                 ))}
               </ul>
 
-              <div className={styles.noteBox}>
+              <PaperNote color="yellow">
                 <strong>Uwaga:</strong> w trybach z wieloma celami, np. Każdy każdego, wynik może zależeć od kilku osobnych historii zgadywania.
-              </div>
+              </PaperNote>
             </div>
           </section>
 
@@ -243,10 +244,10 @@ function Rules() {
                 ))}
               </ul>
 
-              <div className={styles.tipBox}>
+              <PaperNote color="green">
                 <strong>Wskazówka:</strong>
                 <span> gra jest najlepsza wtedy, kiedy wszyscy uczciwie ukrywają swoje kody i nie podglądają ekranów innych osób.</span>
-              </div>
+              </PaperNote>
             </div>
           </section>
         </main>

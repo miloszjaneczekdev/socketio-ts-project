@@ -11,6 +11,8 @@ const footerLinks = [
 ]
 
 function SiteFooter() {
+  const currentYear = new Date().getFullYear()
+
   return (
     <>
       <nav className={styles.bottomNav} aria-label="Linki pomocnicze">
@@ -24,7 +26,7 @@ function SiteFooter() {
       </nav>
 
       <footer className={styles.footer}>
-        © 2025 GuessTheCode — made by{' '}
+        © {currentYear} GuessTheCode — made by{' '}
         <a href="http://justonemoreif.com">JUST ONE MORE IF</a>
       </footer>
     </>

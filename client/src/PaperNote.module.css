@@ -1,0 +1,97 @@
+.paperNote {
+  position: relative;
+  isolation: isolate;
+  --paper-note-color: #fff0a8;
+  --paper-note-dark: #e6c96a;
+  --paper-note-transparent: rgba(255, 240, 168, 0);
+  width: min(100%, 34rem);
+  margin: 1.35rem auto 0.7rem;
+  padding: 1.15rem 1.25rem;
+  border: 2px solid var(--paper-note-dark);
+  background:
+    linear-gradient(to bottom right, var(--paper-note-dark), 20%, var(--paper-note-transparent)),
+    var(--paper-note-color);
+  box-shadow: 4px 4px 2px var(--paper-note-dark);
+  line-height: 1.55;
+  text-align: center;
+  transform: rotate(-1.6deg);
+}
+
+.paperNote strong {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-size: 1.2rem;
+}
+
+.paperNote p {
+  margin: 0.3rem 0 0;
+}
+
+.paperNote span {
+  line-height: inherit;
+}
+
+.blue {
+  --paper-note-color: #d5e0f9;
+  --paper-note-dark: #a7bee9;
+  --paper-note-transparent: rgba(213, 224, 249, 0);
+}
+
+.green {
+  --paper-note-color: #d9f7d3;
+  --paper-note-dark: #9dd795;
+  --paper-note-transparent: rgba(217, 247, 211, 0);
+}
+
+.yellow {
+  --paper-note-color: #fff0a8;
+  --paper-note-dark: #e6c96a;
+  --paper-note-transparent: rgba(255, 240, 168, 0);
+}
+
+.red {
+  --paper-note-color: #ffd1d1;
+  --paper-note-dark: #e99898;
+  --paper-note-transparent: rgba(255, 209, 209, 0);
+}
+
+.paperTape {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.paperTape::before,
+.paperTape::after {
+  content: '';
+  position: absolute;
+  width: 2.4rem;
+  height: 0.75rem;
+  border: 1px solid rgba(170, 136, 0, 0.18);
+  background: rgba(255, 255, 255, 0.52);
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.08);
+}
+
+.paperTape:first-child::before {
+  top: -0.45rem;
+  left: -1rem;
+  transform: rotate(-42deg);
+}
+
+.paperTape:first-child::after {
+  top: -0.45rem;
+  right: -1rem;
+  transform: rotate(39deg);
+}
+
+.paperTape:last-child::before {
+  bottom: -0.45rem;
+  left: -1rem;
+  transform: rotate(43deg);
+}
+
+.paperTape:last-child::after {
+  right: -1rem;
+  bottom: -0.45rem;
+  transform: rotate(-41deg);
+}

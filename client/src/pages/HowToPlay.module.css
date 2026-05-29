@@ -55,6 +55,52 @@
   box-shadow: none;
 }
 
+.floatingBackBtn {
+  position: fixed;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  z-index: 1000;
+  isolation: isolate;
+  padding: 0.7rem 1.15rem;
+  border: 2px solid #a7bee9;
+  border-radius: 0;
+  background:
+    linear-gradient(to bottom right, #a7bee9, 20%, rgba(213, 224, 249, 0)),
+    #d5e0f9;
+  box-shadow: 4px 4px 2px #a7bee9, 0 8px 22px rgba(0, 0, 0, 0.18);
+  color: var(--clr-border);
+  font-family: "Gloria Hallelujah", cursive;
+  font-size: 1.15rem;
+  font-weight: 700;
+  filter: url(#squiggly-soft);
+  cursor: pointer;
+  transform: rotate(-2deg);
+  animation: floatingBackIn 0.26s ease-out both;
+  transition: transform .1s ease, box-shadow .1s ease;
+}
+
+.floatingBackBtn:focus-visible {
+  outline: .125rem solid #ffcc00;
+  outline-offset: .35rem;
+}
+
+.floatingBackBtn:active {
+  transform: translate(2px, 2px) rotate(-2deg);
+  box-shadow: none;
+}
+
+@keyframes floatingBackIn {
+  from {
+    opacity: 0;
+    transform: translateY(0.8rem) rotate(-5deg) scale(0.94);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) rotate(-2deg) scale(1);
+  }
+}
+
 .content {
   width: min(980px, calc(100% - 2rem));
   margin: 0 auto;
@@ -175,17 +221,20 @@
   --lobby-demo-gap: 0.85rem;
 
   display: grid;
-  grid-template-columns: minmax(0, var(--lobby-demo-width)) 1fr;
-  gap: 1.5rem;
-  align-items: stretch;
+  grid-template-columns: 1fr;
+  justify-items: center;
+  gap: 1rem;
+  align-items: center;
   margin-top: 0.45rem;
 }
 
 .startLeft {
+  grid-row: 2;
   display: flex;
   flex-direction: column;
   gap: var(--lobby-demo-gap);
   width: min(100%, var(--lobby-demo-width));
+  margin: 0 auto;
   opacity: 1;
   transform: scale(1);
   visibility: visible;
@@ -229,7 +278,8 @@
 }
 
 .demoBtnPressed {
-  animation: demoButtonPress 0.32s ease;
+  transform: translate(2px, 2px);
+  box-shadow: none;
 }
 
 .greenBtn {
@@ -282,12 +332,21 @@
   font-size: 1.7rem;
 }
 
+.codeDemo span.demoFocus:not(.dash) {
+  transform: translate(2px, 2px);
+  box-shadow: none;
+}
+
 .startRight {
+  grid-row: 1;
+  width: min(100%, 34rem);
   display: flex;
   align-items: center;
-  min-height: calc((var(--lobby-demo-height) * 3) + (var(--lobby-demo-gap) * 2));
+  justify-content: center;
+  min-height: 7rem;
   font-size: 1.08rem;
   line-height: 1.6;
+  text-align: center;
 }
 
 .startTypingText {
@@ -301,11 +360,6 @@
   overflow: hidden;
 }
 
-.typeCursor {
-  display: inline-block;
-  margin-left: 0.1rem;
-  animation: typeCursorBlink 0.8s steps(2, start) infinite;
-}
 
 .infoList,
 .hintList,
@@ -450,17 +504,7 @@
   right: -0.18em;
   bottom: 0.04em;
   height: 0.3em;
-  background:
-    repeating-linear-gradient(
-      135deg,
-      var(--green-marker4) 0 10px,
-      transparent 10px 20px
-    ),
-    repeating-linear-gradient(
-      145deg,
-      var(--green-marker3) 0 12px,
-      transparent 12px 24px
-    );
+  background: var(--green-marker4);
   border-radius: 0.35em;
   transform: rotate(-1.5deg);
   opacity: 0.9;
@@ -499,18 +543,6 @@
   overflow: hidden;
 }
 
-@keyframes demoButtonPress {
-  0%, 100% {
-    transform: translate(0, 0);
-    box-shadow: 3px 3px 0 var(--box-shadow);
-  }
-
-  45%, 65% {
-    transform: translate(2px, 2px);
-    box-shadow: none;
-  }
-}
-
 @keyframes codeCellIn {
   from {
     transform: translateY(0.15rem) scale(0.96);
@@ -545,14 +577,56 @@
   }
 }
 
-.secretDemo {
+.secretSetupDemo {
+  width: min(100%, 24rem);
+  margin: 1.35rem auto 0;
   display: flex;
-  gap: 0.65rem;
-  margin-top: 1rem;
-  flex-wrap: wrap;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
 }
 
-.secretDemo span,
+.secretTimer {
+  min-width: 9.5rem;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 0.65rem;
+  background: rgba(255, 255, 255, 0.38);
+  font-size: 1.04rem;
+}
+
+.secretTimer strong {
+  min-width: 2.2rem;
+  color: #0f6f34;
+  font-size: 1.22rem;
+}
+
+.secretDemoMessage {
+  min-height: 3.3rem;
+  width: 100%;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 1.08rem;
+  line-height: 1.45;
+}
+
+.secretDemoMessageDone {
+  color: #0f6f34;
+}
+
+.secretCodeDisplay {
+  display: flex;
+  justify-content: center;
+  gap: 0.65rem;
+  width: 100%;
+}
+
+.secretCodeInput,
 .guessRow span {
   width: 3rem;
   height: 3.4rem;
@@ -564,6 +638,129 @@
   background: rgba(255, 255, 255, 0.55);
   box-shadow: 2px 2px 0 var(--box-shadow);
   font-size: 1.25rem;
+}
+
+.secretCodeInput {
+  width: 3.65rem;
+  height: 4.85rem;
+  background: transparent;
+  font-size: 2rem;
+  transition: transform .1s ease, box-shadow .1s ease, border-color .1s ease;
+}
+
+.secretCodeInputFilled {
+  animation: codeCellIn 0.18s ease both;
+}
+
+.secretCodeInputReady {
+  border-color: #14853d;
+  box-shadow:
+    2px 2px 0 #0f6f34,
+    0 0 0 0.16rem rgba(22, 163, 74, .35);
+}
+
+.secretKeyboard {
+  display: grid;
+  grid-template-columns: repeat(4, 3.5rem);
+  gap: 0.55rem;
+  justify-content: center;
+}
+
+.secretKeyboardButton {
+  height: 3.5rem;
+  position: relative;
+  z-index: 0;
+  overflow: hidden;
+  border: 2px solid var(--clr-border);
+  border-radius: 0.75rem;
+  background: transparent;
+  color: var(--clr-border);
+  font-family: "Gloria Hallelujah", cursive;
+  font-size: 1.25rem;
+  box-shadow: 2px 2px 0 var(--box-shadow);
+  transition: transform .1s ease, box-shadow .1s ease, color .1s ease, border-color .1s ease;
+}
+
+.secretKeyboardButton::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-size: cover;
+}
+
+.secretKeyboardButtonPressed {
+  transform: translate(2px, 2px);
+  box-shadow: none;
+}
+
+.secretNumberButton::before {
+  background-image:
+    repeating-linear-gradient(135deg, var(--blue-marker4) 0 10px, transparent 10px 20px),
+    repeating-linear-gradient(145deg, var(--blue-marker3) 0 12px, transparent 12px 24px);
+}
+
+.secretBackspaceButton {
+  grid-column: span 2;
+}
+
+.secretBackspaceButton::before {
+  background-image:
+    repeating-linear-gradient(135deg, var(--red-marker4) 0 10px, transparent 10px 20px),
+    repeating-linear-gradient(145deg, var(--red-marker3) 0 12px, transparent 12px 24px);
+}
+
+.secretSubmitButton {
+  grid-column: span 4;
+}
+
+.secretSubmitButton::before {
+  background-image:
+    repeating-linear-gradient(135deg, var(--green-marker4) 0 10px, transparent 10px 20px),
+    repeating-linear-gradient(145deg, var(--green-marker3) 0 12px, transparent 12px 24px);
+}
+
+.secretSubmitButtonReady {
+  border-color: #14853d;
+  color: #0f6f34;
+  box-shadow:
+    2px 2px 0 #0f6f34,
+    0 0 0 0.16rem rgba(22, 163, 74, .35);
+}
+
+.guessInputDemo {
+  width: min(100%, 48rem);
+  margin: 1.35rem auto 0;
+  display: grid;
+  grid-template-columns: minmax(0, 24rem) minmax(15rem, 1fr);
+  align-items: stretch;
+  justify-content: center;
+  gap: 1.4rem;
+}
+
+.guessInputPanel {
+  width: min(100%, 24rem);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.guessHistoryDemo {
+  width: min(100%, 17rem);
+  height: 100%;
+  min-height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow-x: hidden;
+}
+
+.guessHistoryStack {
+  width: 100%;
+  height: 100%;
+  max-height: none;
+  overflow: hidden;
 }
 
 .guessRow {

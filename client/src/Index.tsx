@@ -11,6 +11,7 @@ const CODE_LENGTH = 6
 const EMPTY_CODE = Array(CODE_LENGTH).fill('') as string[]
 
 function Index() {
+    const currentYear = new Date().getFullYear()
     const [code, setCode] = useState<string[]>(EMPTY_CODE)
     const [isJoining, setIsJoining] = useState(false)
     const [isCreating, setIsCreating] = useState(false)
@@ -368,7 +369,7 @@ function Index() {
             </nav>
 
             <footer className={styles.footer}>
-                © 2025 GuessTheCode - made by <Link to="http://justonemoreif.com">JUST ONE MORE IF</Link>
+                © {currentYear} GuessTheCode - made by <Link to="http://justonemoreif.com">JUST ONE MORE IF</Link>
             </footer>
         </div>
     )
