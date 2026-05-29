@@ -23,9 +23,10 @@
     );
     transform: translateY(-50%) rotate(-10deg);
     width: min(calc(300px * var(--rotator-scale)), calc(100vw - (32px * var(--rotator-scale))));
-    min-height: calc(150px * var(--rotator-scale));
+
+    height: calc(180px * var(--rotator-scale));
+
     padding: calc(0.75rem * var(--rotator-scale));
-    /* --paper-color: var(--pink); --paper-dark: var(--pink-dark); --shadow-size: 2px; --transparent: rgba(236, 178, 186, 0); */
     --paper-color: #d5e0f9;
     --paper-dark: #a7bee9;
     --shadow-size: calc(3px * var(--rotator-scale));
@@ -61,8 +62,9 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: calc(0.25rem * var(--rotator-scale)) calc(0.6rem * var(--rotator-scale));
+    gap: calc(0.2rem * var(--rotator-scale)) calc(0.4rem * var(--rotator-scale));
     padding: 0 calc(0.35rem * var(--rotator-scale));
+    font-size: calc(16px * var(--rotator-scale));
 }
 
 .lobbyName {
@@ -139,6 +141,15 @@
     bottom: 0;
 }
 
+.lobbyCard,
+.emptyState {
+    min-height: calc(56px * var(--rotator-scale));
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
 @media (max-width: 1260px) {
     .lobbies {
         --rotator-scale: 0.9;
@@ -162,10 +173,11 @@
 }
 
 @media (max-width: 520px) {
-    .lobbies {
+   .lobbies {
         --rotator-scale: 0.78;
         width: 100%;
-        min-height: calc(132px * var(--rotator-scale));
+        height: calc(150px * var(--rotator-scale));
+        min-height: unset;
         padding: calc(0.65rem * var(--rotator-scale));
         transform: rotate(0deg);
     }

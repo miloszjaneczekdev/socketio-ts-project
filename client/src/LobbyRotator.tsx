@@ -1,5 +1,5 @@
 // src/components/LobbyRotator.tsx
-import { useContext, useEffect, useMemo, useRef, useState } from "react"
+import { memo, useContext, useEffect, useRef, useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { SocketContext } from "./SocketProvider"
 import styles from "./LobbyRotator.module.css"
@@ -19,7 +19,7 @@ type Props = {
   intervalMs?: number
 }
 
-export default function LobbyRotator({ intervalMs = 5000 }: Props) {
+const LobbyRotator = memo(function LobbyRotator({ intervalMs = 5000 }: Props) {
   const socket = useContext(SocketContext)
   const navigate = useNavigate()
 
@@ -27,12 +27,31 @@ export default function LobbyRotator({ intervalMs = 5000 }: Props) {
   const [idx, setIdx] = useState(0)
   const [hidden, setHidden] = useState(false)
   const intervalRef = useRef<number | null>(null)
+  const currentLobbyCodeRef = useRef<string | null>(null)
+
+  useEffect(() => {
+    currentLobbyCodeRef.current = lobbies[idx]?.code ?? null
+  }, [lobbies, idx])
 
   // pobierz listę publicznych lobby po starcie
   useEffect(() => {
     const onList = (list: PublicLobby[]) => {
-      setLobbies(list ?? [])
-      setIdx(0)
+      const nextLobbies = list ?? []
+      const currentCode = currentLobbyCodeRef.current
+
+      setLobbies(nextLobbies)
+      setIdx((currentIdx) => {
+        if (!nextLobbies.length) return 0
+
+        if (!currentCode) return Math.min(currentIdx, nextLobbies.length - 1)
+
+        const nextIdx = nextLobbies.findIndex((lobby) => lobby.code === currentCode)
+        return nextIdx >= 0 ? nextIdx : Math.min(currentIdx, nextLobbies.length - 1)
+      })
+
+      if (nextLobbies.length <= 1) {
+        setHidden(false)
+      }
     }
 
     socket.on("publicLobbies", onList)
@@ -51,15 +70,19 @@ export default function LobbyRotator({ intervalMs = 5000 }: Props) {
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current)
     }
-  }, [lobbies, intervalMs])
+  }, [lobbies.length, intervalMs])
 
-  const lobby = useMemo(() => lobbies[idx], [lobbies, idx])
+  const lobby = lobbies[idx] ?? lobbies[0]
 
   const onTransitionEnd = (e: React.TransitionEvent<HTMLButtonElement>) => {
-    if (e.propertyName !== "opacity") return
-    setIdx((p) => (lobbies.length ? (p + 1) % lobbies.length : 0))
-    setHidden(false)
-  }
+  if (e.target !== e.currentTarget) return
+  if (e.propertyName !== "opacity") return
+
+  if (!hidden) return
+
+  setIdx((p) => (lobbies.length ? (p + 1) % lobbies.length : 0))
+  setHidden(false)
+}
 
   const modeIcon = (mode?: string) => {
     const m = (mode || "").toLowerCase()
@@ -75,7 +98,7 @@ export default function LobbyRotator({ intervalMs = 5000 }: Props) {
         <h3>
           <strong>Publiczne lobby</strong>
         </h3>
-        <p>Brak otwartych gier</p>
+        <p className={styles.emptyState}>Brak otwartych gier</p>
         <div className={styles.tapeSection} />
       </section>
     )
@@ -119,4 +142,6 @@ export default function LobbyRotator({ intervalMs = 5000 }: Props) {
       <div className={styles.tapeSection} />
     </section>
   )
-}
+})
+
+export default LobbyRotator

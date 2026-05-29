@@ -1,5 +1,5 @@
 // client/src/NotesGrid.tsx
-import React, { useState, useRef, useEffect } from 'react';
+import { memo, useState, useRef, useEffect } from 'react';
 import type { CSSProperties } from 'react';
 import styles from './NotesGrid.module.css';
 
@@ -36,7 +36,7 @@ const createCellMeta = (): CellMeta => ({
   blobGreen: randomBlobRadius(),
 });
 
-const NotesGrid: React.FC<NotesGridProps> = ({ codeLen, lastGuess }) => {
+const NotesGrid = memo(function NotesGrid({ codeLen, lastGuess }: NotesGridProps) {
   const ROWS = 10;
   const COLS = Math.max(1, codeLen || 1);
 
@@ -207,6 +207,6 @@ const NotesGrid: React.FC<NotesGridProps> = ({ codeLen, lastGuess }) => {
       </div>
     </div>
   );
-};
+});
 
 export default NotesGrid;

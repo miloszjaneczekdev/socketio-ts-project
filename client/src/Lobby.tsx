@@ -1,4 +1,5 @@
 import {
+  memo,
   useMemo,
   useState,
   useCallback,
@@ -54,6 +55,8 @@ type PlayerCard = {
 
 const DEFAULT_AVATAR = '/avatars/avatar4.jpg'
 const BOXES: BoxId[] = ['box-0', 'box-1', 'box-2', 'box-3']
+const EMPTY_BADGE_IDS: BadgeId[] = []
+const EMPTY_EDGE_SIDES: LobbyPayload['edgeSides'] = {}
 
 /* ===========================================
  *  Pomocnicze
@@ -189,6 +192,10 @@ export default function Lobby() {
   const viewPlayers = useMemo(
     () => computeViewPlayers(lobby?.players, myPlayerId),
     [lobby?.players, myPlayerId]
+  )
+  const playersById = useMemo(
+    () => new Map((lobby?.players ?? []).map((player) => [player.playerId, player])),
+    [lobby?.players]
   )
   const cards: PlayerCard[] = useMemo(() => toCards(viewPlayers), [viewPlayers])
   const hostBoxId: BoxId | null = useMemo(
@@ -376,17 +383,17 @@ export default function Lobby() {
     }
   }
 
-  const me = myPlayerId ? lobby?.players.find(p => p.playerId === myPlayerId) : viewPlayers[0]
+  const me = myPlayerId ? playersById.get(myPlayerId) : viewPlayers[0]
   const [nickDraft, setNickDraft] = useState<string>('')
   const [winTextDraft, setWinTextDraft] = useState<string>('')
 
   useEffect(() => {
     if (!me) return
     setNickDraft(me.name ?? 'gracz')
-    const myFromPayload = lobby?.players.find(p => p.playerId === myPlayerId)
+    const myFromPayload = myPlayerId ? playersById.get(myPlayerId) : undefined
     const wt = (myFromPayload as any)?.winText as string | undefined
     setWinTextDraft((wt ?? '').slice(0, 80))
-  }, [me, lobby?.players, myPlayerId])
+  }, [me, playersById, myPlayerId])
 
 
   const orderIndex =
@@ -420,6 +427,22 @@ export default function Lobby() {
   }, [lobby?.players])
 
   const canShowOverlay = (lobby?.settings?.mode === 'standard' || lobby?.settings?.mode === 'turbo')
+  const edgeSides = lobby?.edgeSides ?? EMPTY_EDGE_SIDES
+  const handleTargetsCommit = useCallback(({
+    mapping,
+    sidesByFrom,
+  }: {
+    mapping: Record<string, string>
+    sidesByFrom: LobbyPayload['edgeSides']
+  }) => {
+    if (!iAmHost || !code) return
+    socket.emit('updateTargets', { code, mapping, sidesByFrom })
+  }, [iAmHost, code, socket])
+
+  const handleKickPlayer = useCallback((playerId: string, isBot: boolean) => {
+    if (!code) return
+    socket.emit(isBot ? 'removeBot' : 'kickPlayer', { code, playerId })
+  }, [code, socket])
 
   // pod istniejącymi useState:
   const [countdown, setCountdown] = useState<number | null>(null)
@@ -569,7 +592,7 @@ export default function Lobby() {
 
   function doLeaveLobby() {
     if (!code || !lobby) return
-    const meP = myPlayerId ? lobby?.players.find(p => p.playerId === myPlayerId) : undefined
+    const meP = myPlayerId ? playersById.get(myPlayerId) : undefined
     const pid = meP?.playerId
     if (pid) socket.emit('leaveLobby', { code, playerId: pid })
     navigate('/')
@@ -837,7 +860,7 @@ export default function Lobby() {
                     isOver={overBox === 'box-0'}
                     crownDragging={activeType === 'crown'}
                     hideBadge={activeType === 'badge' && badgeAt('box-0') === activeBadgeId}
-                    noAnimIds={[]}
+                    noAnimIds={EMPTY_BADGE_IDS}
                     canDragCrown={iAmHost}
                     showBadge={showBadges}
                     canDragBadge={canDragBadge}
@@ -891,7 +914,7 @@ export default function Lobby() {
               <div className={style.playersList}>
                 {cards.slice(1).filter(c => c.playerId).map((card) => {
                   const boxId = card.id
-                  const p = lobby?.players.find(p => p.playerId === card.playerId)
+                  const p = card.playerId ? playersById.get(card.playerId) : undefined
                   const isReady = !!p?.ready
                   const isBot = !!p?.isBot
                   const canKick = iAmHost && hostBoxId !== boxId
@@ -901,23 +924,19 @@ export default function Lobby() {
                       key={card.playerId || boxId}
                       card={card}
                       ready={isReady}
+                      isBot={isBot}
                       badgeId={badgeAt(boxId)}
                       badgeLabelFn={badgeLabel}
                       isHost={hostBoxId === boxId}
                       isOver={overBox === boxId}
                       crownDragging={activeType === 'crown'}
-                      disableRemove={!canKick}
                       hideBadge={activeType === 'badge' && badgeAt(boxId) === activeBadgeId}
-                      noAnimIds={[]}
+                      noAnimIds={EMPTY_BADGE_IDS}
                       canDragCrown={iAmHost}
                       showBadge={showBadges}
                       canDragBadge={canDragBadge}
                       canKick={canKick}
-                      onKick={() => {
-                        if (!code || !p) return
-                        if (isBot) socket.emit('removeBot', { code, playerId: p.playerId })
-                        else socket.emit('kickPlayer', { code, playerId: p.playerId })
-                      }}
+                      onKickPlayer={handleKickPlayer}
                     />
                   )
                 })}
@@ -1011,11 +1030,8 @@ export default function Lobby() {
           canEdit={iAmHost}
           playerIds={playerIdsInView}
           mapping={singleTargetMap}                 // playerId -> playerId (z payloadu)
-          sidesByFrom={lobby?.edgeSides || {}}      // playerId -> { fromSide, toSide } (z payloadu)
-          onCommit={({ mapping, sidesByFrom }) => { // tylko u hosta
-            if (!iAmHost || !code) return
-            socket.emit('updateTargets', { code, mapping, sidesByFrom })
-          }}
+          sidesByFrom={edgeSides}                   // playerId -> { fromSide, toSide } (z payloadu)
+          onCommit={handleTargetsCommit}
         />
       )}
 
@@ -1381,7 +1397,7 @@ function SettingGroup({
   )
 }
 
-function BoxCard({
+const BoxCard = memo(function BoxCard({
   card, badgeId, isHost, isOver, crownDragging, hideBadge, noAnimIds, badgeLabelFn, canDragCrown, showBadge, canDragBadge
 }: {
   card: PlayerCard; badgeId?: BadgeId; isHost: boolean; isOver: boolean; crownDragging: boolean; hideBadge: boolean; noAnimIds: BadgeId[]; badgeLabelFn: (id?: BadgeId | null) => string; canDragCrown: boolean; showBadge: boolean; canDragBadge: boolean
@@ -1410,11 +1426,12 @@ function BoxCard({
       )}
     </div>
   )
-}
+})
 
-function PlayerRow({
+const PlayerRow = memo(function PlayerRow({
   card,
   ready,
+  isBot: isBotPlayer,
   badgeId,
   isHost,
   isOver,
@@ -1426,15 +1443,15 @@ function PlayerRow({
   showBadge,
   canDragBadge,
   canKick,
-  onKick,
+  onKickPlayer,
 }: {
   card: PlayerCard
   ready: boolean
+  isBot: boolean
   badgeId?: BadgeId
   isHost: boolean
   isOver: boolean
   crownDragging: boolean
-  disableRemove: boolean
   hideBadge: boolean
   noAnimIds: BadgeId[]
   badgeLabelFn: (id?: BadgeId | null) => string
@@ -1442,12 +1459,12 @@ function PlayerRow({
   showBadge: boolean
   canDragBadge: boolean
   canKick: boolean
-  onKick: () => void
+  onKickPlayer: (playerId: string, isBot: boolean) => void
 }) {
   const { setNodeRef } = useDroppable({ id: card.id, data: { type: 'box', boxId: card.id } })
 
   const isHotSeat = !!card.playerId && card.playerId.startsWith('local_')
-  const isBot = !!card.playerId && card.playerId.startsWith('bot_')
+  const isBot = isBotPlayer || (!!card.playerId && card.playerId.startsWith('bot_'))
   const isOnlineHuman = !!card.playerId && !isHotSeat && !isBot && !isHost
 
   return (
@@ -1488,7 +1505,9 @@ function PlayerRow({
       {canKick && (
         <button
           className={style.removeBtn}
-          onClick={onKick}
+          onClick={() => {
+            if (card.playerId) onKickPlayer(card.playerId, isBot)
+          }}
           title="Usuń"
           aria-label={`Usuń gracza ${card.name}`}
           type="button"
@@ -1507,7 +1526,7 @@ function PlayerRow({
       )}
     </div>
   )
-}
+})
 
 function SortableBadge({
   id,

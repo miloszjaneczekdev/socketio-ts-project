@@ -1,5 +1,7 @@
 import React, { memo, useMemo, useRef, useCallback, useEffect } from 'react'
 
+const DEFAULT_PALETTE = ['#2563EB', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#06B6D4', '#22C55E', '#F43F5E']
+
 const FlowGraphOverlay = memo(function FlowGraphOverlay({
   containerRef,
   canEdit = false,
@@ -33,11 +35,9 @@ const FlowGraphOverlay = memo(function FlowGraphOverlay({
     sidesByFrom: Record<string, { fromSide: 'left' | 'right'; toSide: 'left' | 'right' }>
   }) => void
 }) {
-  // ===== kolory =====
-  const DEFAULT_PALETTE = useMemo(
-    () => ['#2563EB', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#06B6D4', '#22C55E', '#F43F5E'],
-    []
-  )
+  const mappingKey = useMemo(() => JSON.stringify(mapping), [mapping])
+  const sidesByFromKey = useMemo(() => JSON.stringify(sidesByFrom ?? {}), [sidesByFrom])
+  const playerIdsKey = useMemo(() => playerIds.join(','), [playerIds])
 
   type NodeT = { id: string; el: HTMLElement; cx: number; cy: number; w: number; h: number }
   type SideT = 'left' | 'right'
@@ -74,9 +74,9 @@ const FlowGraphOverlay = memo(function FlowGraphOverlay({
     const hasShadow = !!localShadowMapRef.current
     const stillLocked = now < ignoreUntilTsRef.current
     const shadowDiffers =
-      hasShadow && JSON.stringify(mapping) !== JSON.stringify(localShadowMapRef.current)
+      hasShadow && mappingKey !== JSON.stringify(localShadowMapRef.current)
     return (stillLocked || !!dragRef.current) && shadowDiffers
-  }, [canEdit, mapping])
+  }, [canEdit, mappingKey])
 
   // ===== helpers: mapowania nX <-> playerId (kolejność .box === playerIds) =====
   const nodeIdToPlayerId = useCallback((nid: string): string | undefined => {
@@ -236,7 +236,7 @@ const FlowGraphOverlay = memo(function FlowGraphOverlay({
     }
     // po zasileniu — przerysuj
     layoutNodes(); ensureEdges(); render()
-  }, [JSON.stringify(sidesByFrom), JSON.stringify(mapping), playerIds.join(',')])
+  }, [sidesByFromKey, mappingKey, playerIdsKey])
 
   // ===== budowa krawędzi (z mappingu serwera + preferencje stron) =====
   const ensureEdges = useCallback(() => {
@@ -407,7 +407,7 @@ const FlowGraphOverlay = memo(function FlowGraphOverlay({
     if (colorResolver) return colorResolver(edge, idx)
     const pal = (palette && palette.length ? palette : DEFAULT_PALETTE)
     return pal[idx % pal.length]
-  }, [edgeColors, colorResolver, palette, DEFAULT_PALETTE])
+  }, [edgeColors, colorResolver, palette])
 
   // ===== render =====
   const render = useCallback(() => {
@@ -649,14 +649,14 @@ const FlowGraphOverlay = memo(function FlowGraphOverlay({
     layoutNodes()
     if (!isHostLockActive()) {
       if (localShadowMapRef.current &&
-          JSON.stringify(mapping) === JSON.stringify(localShadowMapRef.current)) {
+          mappingKey === JSON.stringify(localShadowMapRef.current)) {
         localShadowMapRef.current = null
         ignoreUntilTsRef.current = 0
       }
       ensureEdges()
     }
     render()
-  }, [JSON.stringify(mapping), playerIds.join(',')])
+  }, [mappingKey, playerIdsKey])
 
   // ===== JSX =====
   return (

@@ -1,0 +1,63 @@
+/* Wyłącznie klasy lokalne – zero globalnych stylów, brak wpływu na istniejący layout */
+
+.tooltip {
+  z-index: 9999;
+  max-width: 300px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  background: rgba(33, 33, 33, 0.96);
+  color: #fff;
+  font-size: 1rem;
+  line-height: 1.2;
+  text-align: center;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.18);
+  pointer-events: none;               /* brak interakcji – nie psuje hovera elementu */
+  transform: translate(-50%, -100%);  /* domyślne dla 'top' */
+  opacity: 0;
+  animation: tt-fade-in 120ms ease-out forwards;
+  filter: url(#squiggly-soft);
+}
+
+.arrow {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: rgba(33, 33, 33, 0.96);
+  transform: rotate(45deg);
+}
+
+/* Dostosowanie transform i pozycji strzałki per placement */
+.top { transform: translate(-50%, -100%); }
+.top .arrow {
+  left: 50%; top: 100%;
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.bottom { transform: translate(-50%, 0%); }
+.bottom .arrow {
+  left: 50%; top: 0%;
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.left { transform: translate(-100%, -50%); }
+.left .arrow {
+  left: 100%; top: 50%;
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.right { transform: translate(0%, -50%); }
+.right .arrow {
+  left: 0%; top: 50%;
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+/* Delikatna animacja; bez globalnych preferencji */
+@keyframes tt-fade-in {
+  from { opacity: 0; transform: translate(-50%, -98%); }
+  to   { opacity: 1; }
+}
+
+/* Szacunek dla prefers-reduced-motion – nie narusza istniejących stylów */
+@media (prefers-reduced-motion: reduce) {
+  .tooltip { animation: none; }
+}

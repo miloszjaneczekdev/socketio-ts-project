@@ -336,6 +336,8 @@ type ShotHistoryItem = {
   timeoutEmpty: boolean;
 };
 
+const getShotHistoryId = (item: ShotHistoryItem) => item.id;
+
 function getShotGuessesByTurn(row: SummaryRow) {
   const dynamicRow = row as SummaryRow & Record<string, any>;
 
@@ -421,7 +423,7 @@ export default function Summary() {
   const location = useLocation();
   const navigate = useNavigate();
   const socket = useContext(SocketContext);
-  const params = new URLSearchParams(location.search);
+  const params = useMemo(() => new URLSearchParams(location.search), [location.search]);
 
   const code = params.get('code')?.toUpperCase() || '';
 
@@ -452,7 +454,7 @@ export default function Summary() {
     } catch {
       return { summary: [], meta: fallbackMeta };
     }
-  }, [code]);
+  }, [code, params]);
 
   const summary = storedSummary.summary;
   const meta = storedSummary.meta;
@@ -480,23 +482,47 @@ export default function Summary() {
     null;
   const winner = orderedSummary[0] ?? null;
 
-  const chartPlayers = orderedSummary.slice(0, 4);
-  const chartTurns = Math.max(
-    1,
-    ...chartPlayers.map((row) => Math.max(row.attempts, getPerfectHitsByTurn(row).length)),
+  const chartPlayers = useMemo(() => orderedSummary.slice(0, 4), [orderedSummary]);
+  const chartSeries = useMemo(
+    () =>
+      chartPlayers.map((row) => ({
+        row,
+        perfectHits: getPerfectHitsByTurn(row),
+      })),
+    [chartPlayers],
+  );
+  const chartTurns = useMemo(
+    () =>
+      Math.max(
+        1,
+        ...chartSeries.map(({ row, perfectHits }) => Math.max(row.attempts, perfectHits.length)),
+      ),
+    [chartSeries],
   );
   const numericCodeLen = Number(codeLen);
-  const chartMaxPerfectHits = Math.max(
-    1,
-    Number.isFinite(numericCodeLen) ? numericCodeLen : 0,
-    ...chartPlayers.flatMap((row) => getPerfectHitsByTurn(row)),
+  const chartMaxPerfectHits = useMemo(
+    () =>
+      Math.max(
+        1,
+        Number.isFinite(numericCodeLen) ? numericCodeLen : 0,
+        ...chartSeries.flatMap(({ perfectHits }) => perfectHits),
+      ),
+    [chartSeries, numericCodeLen],
   );
-  const chartYTicks = Array.from({ length: chartMaxPerfectHits + 1 }, (_, value) => value).filter(
-    (value) => chartMaxPerfectHits <= 6 || value === 0 || value === chartMaxPerfectHits || value % 2 === 0,
+  const chartYTicks = useMemo(
+    () =>
+      Array.from({ length: chartMaxPerfectHits + 1 }, (_, value) => value).filter(
+        (value) => chartMaxPerfectHits <= 6 || value === 0 || value === chartMaxPerfectHits || value % 2 === 0,
+      ),
+    [chartMaxPerfectHits],
   );
   const chartXStep = Math.max(1, Math.ceil(chartTurns / 6));
-  const chartXTicks = Array.from({ length: chartTurns }, (_, index) => index + 1).filter(
-    (turn) => chartTurns <= 8 || turn === 1 || turn === chartTurns || turn % chartXStep === 0,
+  const chartXTicks = useMemo(
+    () =>
+      Array.from({ length: chartTurns }, (_, index) => index + 1).filter(
+        (turn) => chartTurns <= 8 || turn === 1 || turn === chartTurns || turn % chartXStep === 0,
+      ),
+    [chartTurns, chartXStep],
   );
 
   const digitStats = useMemo(() => {
@@ -515,13 +541,16 @@ export default function Summary() {
   }, [orderedSummary]);
 
   const maxDigitCount = Math.max(1, ...digitStats.map((item) => item.count));
-  const shotTimes = selectedPlayer ? getShotTimes(selectedPlayer) : [];
-  const shotHints = selectedPlayer ? getShotHintsByTurn(selectedPlayer) : [];
-  const summaryHintMode = getSummaryHintMode(meta);
-  const bestShot = shotTimes.length ? Math.min(...shotTimes) : 0;
-  const shotHistoryItems = selectedPlayer
-    ? buildShotHistoryItems(selectedPlayer, shotTimes, shotHints, bestShot)
-    : [];
+  const summaryHintMode = useMemo(() => getSummaryHintMode(meta), [meta]);
+  const shotHistoryItems = useMemo(() => {
+    if (!selectedPlayer) return [] as ShotHistoryItem[];
+
+    const shotTimes = getShotTimes(selectedPlayer);
+    const shotHints = getShotHintsByTurn(selectedPlayer);
+    const bestShot = shotTimes.length ? Math.min(...shotTimes) : 0;
+
+    return buildShotHistoryItems(selectedPlayer, shotTimes, shotHints, bestShot);
+  }, [selectedPlayer]);
 
   const podium = orderedSummary;
   const historyPlayers = orderedSummary;
@@ -726,7 +755,7 @@ export default function Summary() {
                       <div className={styles.summaryShotHistory}>
                         <StickyStack
                           items={shotHistoryItems}
-                          getId={(item) => item.id}
+                          getId={getShotHistoryId}
                           cardHeight={100}
                           renderItem={(item, index, array) => {
                             const codeLenNumber = Number(codeLen);
@@ -771,7 +800,7 @@ export default function Summary() {
                 <div className={styles.graphBox}>
                   <div className={styles.chartFrame}>
                     <div className={styles.legend}>
-                      {chartPlayers.map((row, index) => (
+                      {chartSeries.map(({ row }, index) => (
                         <span key={row.playerId} className={LINE_CLASSES[index]}>
                           {row.name}
                         </span>
@@ -838,9 +867,7 @@ export default function Summary() {
                         numer tury
                       </text>
 
-                      {chartPlayers.map((row, index) => {
-                        const perfectHits = getPerfectHitsByTurn(row);
-
+                      {chartSeries.map(({ row, perfectHits }, index) => {
                         return (
                           <g key={row.playerId}>
                             <polyline

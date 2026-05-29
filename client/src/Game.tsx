@@ -109,6 +109,9 @@ interface MiniSocket {
   emit: (event: string, ...args: any[]) => void;
 }
 
+const DIGIT_KEYS = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
+const getGuessId = (guess: GuessRow) => guess.ts;
+
 /* ========= Helpers ========= */
 
 function randomCode(len: number): string {
@@ -132,6 +135,13 @@ function formatTimerMs(ms: number) {
   const s = sec % 60;
   const cs = Math.floor((total % 1000) / 10);
   return `${padTimePart(m)}:${padTimePart(s)}.${padTimePart(cs)}`;
+}
+
+function formatMsShort(ms: number) {
+  const total = Math.max(0, Math.floor(ms));
+  const s = Math.floor(total / 1000);
+  const cs = Math.floor((total % 1000) / 10);
+  return `${padTimePart(s)}.${padTimePart(cs)}`;
 }
 
 function TimerText({ deadline }: { deadline: number | null }) {
@@ -283,6 +293,10 @@ function Game(): JSX.Element {
   const showHistoryFlag = settings?.showHistory !== false;
   const hintMode = settings?.hints ?? 'standard';
   const isHotSeat = !!settings?.hotSeat;
+  const playersById = useMemo(
+    () => new Map(players.map((player) => [player.playerId, player])),
+    [players],
+  );
   const onTimeout = settings?.onTimeout ?? 'random'; // ⬅️ domyślnie random
 
   // inicjalizacja inputów przy zmianie długości kodu
@@ -295,16 +309,16 @@ function Game(): JSX.Element {
   const me = useMemo(
     () =>
       playerId
-        ? players.find((p) => p.playerId === playerId) || null
+        ? playersById.get(playerId) || null
         : null,
-    [players, playerId],
+    [playersById, playerId],
   );
   const activeActor = useMemo(
     () =>
       currentActorId
-        ? players.find((p) => p.playerId === currentActorId) || null
+        ? playersById.get(currentActorId) || null
         : null,
-    [players, currentActorId],
+    [playersById, currentActorId],
   );
   const effectiveMe = isHotSeat && mode !== 'turbo' && activeActor ? activeActor : me;
 
@@ -324,9 +338,9 @@ function Game(): JSX.Element {
     ).filter(isNonEmpty);
 
     return ids
-      .map((id) => players.find((p) => p.playerId === id))
+      .map((id) => playersById.get(id))
       .filter(isNonEmpty);
-  }, [players, myActiveTargets, myTargetId, mode]);
+  }, [playersById, myActiveTargets, myTargetId, mode]);
 
   const firstTargetId = targetsForTabs[0]?.playerId ?? null;
 
@@ -441,14 +455,14 @@ function Game(): JSX.Element {
     if (mode !== 'solo') return;
     if (lobbyState !== 'lobby') return;
 
-    const mePlayer = players.find((p) => p.playerId === playerId);
+    const mePlayer = playersById.get(playerId);
     if (!mePlayer || mePlayer.ready) return;
 
     socket.emit('updateReady', {
       code: lobbyCode,
       ready: true,
     });
-  }, [socketFromCtx, lobbyCode, lobbyState, mode, players, playerId]);
+  }, [socketFromCtx, lobbyCode, lobbyState, mode, playersById, playerId]);
 
   /* ========= SOLO – wykrycie odgadnięcia ========= */
   const hasSolvedSolo = useMemo(() => {
@@ -604,7 +618,7 @@ function Game(): JSX.Element {
   }, [mode, guesses, playerId, coopTargetId, codeLen]);
 
   /* ========= czy mogę teraz pisać / oddać strzał ========= */
-  const canType = (): boolean => {
+  const canTypeNow = (() => {
     // na początku gry (multi) – jeśli nie masz jeszcze kodu, najpierw go ustawiasz
     if (
       mode !== 'solo' &&
@@ -640,15 +654,12 @@ function Game(): JSX.Element {
     }
 
     return allowed;
-  };
+  })();
 
 
-  const isFullGuess = useMemo(
-    () => input.filter((c) => !!c).length === codeLen,
-    [input, codeLen],
-  );
-  const hasAnyInput = useMemo(() => input.some((c) => !!c), [input]);
-  const canSubmitNow = canType();
+  const isFullGuess = input.every((c) => !!c) && input.length === codeLen;
+  const hasAnyInput = input.some((c) => !!c);
+  const canSubmitNow = canTypeNow;
   const disabledSubmit = !canSubmitNow || !isFullGuess;
 
   /* ========= input refs ========= */
@@ -736,11 +747,6 @@ function Game(): JSX.Element {
   };
 
   /* ========= wysyłanie na socket ========= */
-  const socketEmit = (event: string, payload: any) => {
-    if (!socketFromCtx) return;
-    socketFromCtx.emit(event, payload);
-  };
-
   const handleSubmit = () => {
     const guess = (input.join('') || '').slice(0, codeLen);
     if (guess.length !== codeLen) {
@@ -758,14 +764,14 @@ function Game(): JSX.Element {
 
     if (isCodeSetupPhase) {
       // ustawiamy tajny kod + READY już w widoku gry
-      socketEmit('updateReady', {
+      socketFromCtx.emit('updateReady', {
         code: lobbyCode,
         secretCode: guess,
         ready: true,
       });
     } else {
       // normalny strzał (w tym SOLO)
-      socketEmit('submitGuess', {
+      socketFromCtx.emit('submitGuess', {
         code: lobbyCode,
         guess,
       });
@@ -802,14 +808,14 @@ function Game(): JSX.Element {
 
     if (isCodeSetupPhase) {
       // auto-ustawienie tajnego kodu po czasie
-      socketEmit('updateReady', {
+      socketFromCtx.emit('updateReady', {
         code: lobbyCode,
         secretCode: valueForTimeout,
         ready: true,
       });
     } else {
       // normalny strzał (w tym SOLO)
-      socketEmit('submitGuess', {
+      socketFromCtx.emit('submitGuess', {
         code: lobbyCode,
         guess: valueForTimeout,
       });
@@ -818,7 +824,6 @@ function Game(): JSX.Element {
     waitingForAuto,
     onTimeout,
     codeLen,
-    lobbyState,
     mode,
     lobbyCode,
     socketFromCtx,
@@ -916,8 +921,6 @@ function Game(): JSX.Element {
     timerSec,
     lobbyState,
     mode,
-    me,
-    codeLen,
     hasSolvedSolo,
     activePlayerId,
     playerId,
@@ -949,7 +952,7 @@ function Game(): JSX.Element {
     mode !== 'solo' &&
     lobbyState === 'game' &&
     !hotSeatReady &&
-    canType();
+    canTypeNow;
 
   useEffect(() => {
     if (shouldShowHotSeatOverlay && !hotSeatReadyDeadline) {
@@ -979,21 +982,12 @@ function Game(): JSX.Element {
 
   /* ========= autofocus ========= */
   useEffect(() => {
-    if (canType()) {
+    if (canTypeNow) {
       requestAnimationFrame(() => {
         focusFirstInput();
       });
     }
-  }, [mode, lobbyState, activePlayerId, isCoopGuesser, coopTargetId]);
-
-  /* ========= formaty czasu ========= */
-  const pad = (n: number | string, l = 2) => String(n).padStart(l, '0');
-  const formatMsShort = (ms: number) => {
-    const total = Math.max(0, Math.floor(ms));
-    const s = Math.floor(total / 1000);
-    const cs = Math.floor((total % 1000) / 10);
-    return `${pad(s)}.${pad(cs)}`;
-  };
+  }, [canTypeNow]);
 
   const hudDeadline =
     turnDeadline ??
@@ -1038,17 +1032,66 @@ function Game(): JSX.Element {
   const displayPlayers = useMemo(() => {
     if (mode === 'solo') {
       const self =
-        (playerId && players.find((p) => p.playerId === playerId)) ||
+        (playerId && playersById.get(playerId)) ||
         players[0];
       return self ? [self] : [];
     }
     return players;
-  }, [mode, players, playerId]);
+  }, [mode, players, playersById, playerId]);
 
   const currentMyTargetId =
     mode === 'coop'
       ? coopTargetId
       : firstTargetId ?? activeTargetId;
+
+  const historyPlayerId = playerId || '';
+
+  const historyPanelTargets = useMemo(() => {
+    if (mode === 'ffa' || mode === 'coop') {
+      return players.filter((p) => p.playerId !== historyPlayerId);
+    }
+
+    if (mode === 'standard' || mode === 'turbo') {
+      return targetsForTabs[0] ? [targetsForTabs[0]] : [];
+    }
+
+    return [] as Player[];
+  }, [mode, players, historyPlayerId, targetsForTabs]);
+
+  const historyByTargetId = useMemo(() => {
+    const targetIds = new Set(historyPanelTargets.map((target) => target.playerId));
+    const byTarget = new Map<string, GuessRow[]>();
+
+    for (const target of historyPanelTargets) {
+      byTarget.set(target.playerId, []);
+    }
+
+    for (const guess of guesses) {
+      if (guess.targetId && targetIds.has(guess.targetId)) {
+        byTarget.get(guess.targetId)?.push(guess);
+      }
+    }
+
+    return byTarget;
+  }, [guesses, historyPanelTargets]);
+
+  const singleHistoryList = useMemo(() => {
+    if (mode === 'solo') {
+      return guesses.filter((guess) => guess.guesserId === historyPlayerId);
+    }
+
+    if (mode === 'standard' || mode === 'turbo') {
+      const targetId = historyPanelTargets[0]?.playerId ?? null;
+      return targetId ? historyByTargetId.get(targetId) ?? [] : guesses;
+    }
+
+    return [] as GuessRow[];
+  }, [mode, guesses, historyPlayerId, historyPanelTargets, historyByTargetId]);
+
+  const selectedTargetHistoryList = useMemo(
+    () => (selectedTargetId ? historyByTargetId.get(selectedTargetId) ?? [] : []),
+    [historyByTargetId, selectedTargetId],
+  );
 
   /* ========= opis tury ========= */
   const turnInfoText = (() => {
@@ -1162,14 +1205,17 @@ function Game(): JSX.Element {
   })();
 
 
-  const lastGuessForNotes =
-  guesses.length > 0
-    ? {
-        ts: guesses[0].ts,
-        guess: guesses[0].guess || '',
-        correct: guesses[0].result?.correct ?? 0,
-      }
-    : null;
+  const lastGuessForNotes = useMemo(() => {
+    const latestGuess = guesses[0];
+
+    return latestGuess
+      ? {
+          ts: latestGuess.ts,
+          guess: latestGuess.guess || '',
+          correct: latestGuess.result?.correct ?? 0,
+        }
+      : null;
+  }, [guesses]);
 
   /* ========= RENDER ========= */
   return (
@@ -1419,7 +1465,7 @@ function Game(): JSX.Element {
                   <>
                     🎯 Zgadujemy:{' '}
                     <strong>
-                      {players.find((p) => p.playerId === coopTargetId)?.name ||
+                      {playersById.get(coopTargetId)?.name ||
                         '-'}
                     </strong>
                   </>
@@ -1459,7 +1505,7 @@ function Game(): JSX.Element {
           </div>
 
           <div className={styles.keyboard}>
-            {[...'1234567890'].map((n) => (
+            {DIGIT_KEYS.map((n) => (
               <button
                 key={n}
                 type="button"
@@ -1502,15 +1548,7 @@ function Game(): JSX.Element {
             <h3>Historia prób</h3>
 
             {(() => {
-              const myId = playerId || '';
-              const panelTargets =
-                mode === 'ffa' || mode === 'coop'
-                  ? players.filter((p) => p.playerId !== myId)
-                  : mode === 'standard' || mode === 'turbo'
-                    ? targetsForTabs[0]
-                      ? [targetsForTabs[0]]
-                      : []
-                    : [];
+              const panelTargets = historyPanelTargets;
 
               const renderHistoryControls = () =>
                 (mode === 'ffa' || mode === 'coop') && (
@@ -1551,14 +1589,6 @@ function Game(): JSX.Element {
                     ? panelTargets[0].name
                     : null;
 
-                const singleList =
-                  mode === 'solo'
-                    ? guesses.filter((g) => g.guesserId === myId)
-                    : guesses.filter((g) => {
-                      const tid = panelTargets[0]?.playerId ?? null;
-                      return tid ? g.targetId === tid : true;
-                    });
-
                 return (
                   <div className={styles.historyBlock}>
                     {headerName && (
@@ -1572,8 +1602,8 @@ function Game(): JSX.Element {
                       data-hidden={!showHistoryFlag}
                     >
                       <StickyStack
-                        items={singleList}
-                        getId={(g) => g.ts}
+                        items={singleHistoryList}
+                        getId={getGuessId}
                         renderItem={(g, i, arr) => {
                           const isSoloHit =
                             mode === 'solo' &&
@@ -1694,15 +1724,8 @@ function Game(): JSX.Element {
                         data-hidden={!showHistoryFlag}
                       >
                         <StickyStack
-                          items={
-                            selectedTargetId
-                              ? guesses.filter(
-                                (g) =>
-                                  g.targetId === selectedTargetId,
-                              )
-                              : []
-                          }
-                          getId={(g) => g.ts}
+                          items={selectedTargetHistoryList}
+                          getId={getGuessId}
                           renderItem={(g) => {
                             const timeoutEmpty =
                               !g.guess || g.guess.trim() === '';
@@ -1758,9 +1781,7 @@ function Game(): JSX.Element {
                   ) : (
                     <div className={styles.historyGrid}>
                       {panelTargets.map((t) => {
-                        const listForT = guesses.filter(
-                          (g) => g.targetId === t.playerId,
-                        );
+                        const listForT = historyByTargetId.get(t.playerId) ?? [];
                         return (
                           <div key={t.playerId} className={styles.historyCol}>
                             <div className={styles.historyColHeader}>
@@ -1772,7 +1793,7 @@ function Game(): JSX.Element {
                             >
                               <StickyStack
                                 items={listForT}
-                                getId={(g) => g.ts}
+                                getId={getGuessId}
                                 renderItem={(g) => {
                                   const timeoutEmpty =
                                     !g.guess ||

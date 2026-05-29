@@ -11,7 +11,6 @@ export default defineConfig({
           react: ['react', 'react-dom', 'react-router-dom'],
           dnd: ['@dnd-kit/core', '@dnd-kit/sortable', '@dnd-kit/utilities'],
           motion: ['framer-motion'],
-          three: ['three'],
         },
       },
     },

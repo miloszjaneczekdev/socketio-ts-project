@@ -441,6 +441,8 @@ function ModeDemoCard({ demo }: { demo: (typeof modeDemos)[number] }) {
         className={styles.modeDemoImage}
         src={activeSlide.imageSrc}
         alt={activeSlide.imageAlt}
+        loading="lazy"
+        decoding="async"
       />
 
       <p className={styles.modeDemoTextBottom} aria-live="polite">
