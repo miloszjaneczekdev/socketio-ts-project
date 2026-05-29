@@ -1,9 +1,8 @@
 import { Link, useNavigate } from 'react-router-dom'
 import styles from './Contact.module.css'
 import SiteFooter from '../SiteFooter'
-import PaperNote from '../PaperNote'
 
-const CONTACT_EMAIL = 'twoj-email@example.com'
+const CONTACT_EMAIL = 'kontakt@zgadnijkod.pl'
 
 const reportItems = [
   'Co próbowałeś zrobić?',
@@ -82,12 +81,6 @@ function Contact() {
                 <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
               </div>
 
-              <PaperNote color="yellow">
-                <strong>Ważne:</strong>
-                <p>
-                  Podmień adres <span>{CONTACT_EMAIL}</span> na swój prawdziwy adres kontaktowy przed publikacją strony.
-                </p>
-              </PaperNote>
             </div>
           </section>
 
@@ -133,7 +126,9 @@ function Contact() {
               <h2>Zanim napiszesz</h2>
 
               <p className={styles.lead}>
-                Część odpowiedzi możesz znaleźć szybciej w poradniku i FAQ.
+                Zanim wyślesz wiadomość, zajrzyj do poradnika{' '}
+                <Link className={styles.inlineLink} to="/howtoplay">Jak grać</Link>
+                . Być może znajdziesz tam odpowiedź szybciej.
               </p>
             </div>
           </section>
