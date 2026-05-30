@@ -73,7 +73,7 @@
   font-family: "Gloria Hallelujah", cursive;
   font-size: 1.15rem;
   font-weight: 700;
-  filter: url(#squiggly-soft);
+  filter: var(--svg-squiggly-filter);
   cursor: pointer;
   transform: rotate(-2deg);
   animation: floatingBackIn 0.26s ease-out both;

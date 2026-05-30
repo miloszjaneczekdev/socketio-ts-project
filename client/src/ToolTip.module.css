@@ -5,7 +5,7 @@
   pointer-events: none;
   width: max-content;
   max-width: min(300px, calc(100vw - 16px));
-  filter: url(#squiggly-soft);
+  filter: var(--svg-squiggly-filter);
 }
 
 .measuring {

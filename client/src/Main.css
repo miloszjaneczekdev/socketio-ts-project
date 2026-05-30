@@ -45,6 +45,15 @@
     --tape-gray: #dbd8be;
     --tape-edge-gray: #b7b49d;
     --transparent: rgba(255, 255, 255, 0);
+    --svg-squiggly-filter: none;
+}
+
+:root[data-svg-filters='full'] {
+    --svg-squiggly-filter: url(#squiggly-soft);
+}
+
+:root[data-svg-filters='light'] {
+    --svg-squiggly-filter: url(#squiggly-light);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -180,7 +189,13 @@ body {
 }
 
 .container {
-    filter: url(#squiggly-soft);
+    filter: var(--svg-squiggly-filter);
+}
+
+:root[data-svg-filters='full'] .container,
+:root[data-svg-filters='light'] .container {
+    -webkit-filter: var(--svg-squiggly-filter);
+    transform: translateZ(0);
 }
 
 
