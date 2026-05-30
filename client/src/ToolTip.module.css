@@ -1,8 +1,20 @@
-/* Wyłącznie klasy lokalne – zero globalnych stylów, brak wpływu na istniejący layout */
+/* Local tooltip styles only. */
 
 .tooltip {
   z-index: 9999;
-  max-width: 300px;
+  pointer-events: none;
+  width: max-content;
+  max-width: min(300px, calc(100vw - 16px));
+  filter: url(#squiggly-soft);
+}
+
+.measuring {
+  visibility: hidden;
+}
+
+.bubble {
+  position: relative;
+  max-width: inherit;
   padding: 6px 10px;
   border-radius: 6px;
   background: rgba(33, 33, 33, 0.96);
@@ -11,11 +23,9 @@
   line-height: 1.2;
   text-align: center;
   box-shadow: 0 6px 16px rgba(0,0,0,0.18);
-  pointer-events: none;               /* brak interakcji – nie psuje hovera elementu */
-  transform: translate(-50%, -100%);  /* domyślne dla 'top' */
   opacity: 0;
-  animation: tt-fade-in 150ms ease-out forwards;
-  filter: url(#squiggly-soft);
+  transform: scale(0.96);
+  will-change: opacity, transform;
 }
 
 .arrow {
@@ -26,38 +36,87 @@
   transform: rotate(45deg);
 }
 
-/* Dostosowanie transform i pozycji strzałki per placement */
-.top { transform: translate(-50%, -100%); }
+.top .bubble {
+  transform-origin: var(--tooltip-arrow-left, 50%) 100%;
+}
+
+.ready.top .bubble {
+  animation: tt-bubble-in 160ms ease-out forwards;
+}
+
 .top .arrow {
-  left: 50%; top: 100%;
+  left: var(--tooltip-arrow-left, 50%);
+  top: 100%;
   transform: translate(-50%, -50%) rotate(45deg);
 }
 
-.bottom { transform: translate(-50%, 0%); }
+.bottom .bubble {
+  transform-origin: var(--tooltip-arrow-left, 50%) 0%;
+}
+
+.ready.bottom .bubble {
+  animation: tt-bubble-in 160ms ease-out forwards;
+}
+
 .bottom .arrow {
-  left: 50%; top: 0%;
+  left: var(--tooltip-arrow-left, 50%);
+  top: 0%;
   transform: translate(-50%, -50%) rotate(45deg);
 }
 
-.left { transform: translate(-100%, -50%); }
+.left .bubble {
+  transform-origin: 100% var(--tooltip-arrow-top, 50%);
+}
+
+.ready.left .bubble {
+  animation: tt-bubble-in 160ms ease-out forwards;
+}
+
 .left .arrow {
-  left: 100%; top: 50%;
+  left: 100%;
+  top: var(--tooltip-arrow-top, 50%);
   transform: translate(-50%, -50%) rotate(45deg);
 }
 
-.right { transform: translate(0%, -50%); }
+.right .bubble {
+  transform-origin: 0% var(--tooltip-arrow-top, 50%);
+}
+
+.ready.right .bubble {
+  animation: tt-bubble-in 160ms ease-out forwards;
+}
+
 .right .arrow {
-  left: 0%; top: 50%;
+  left: 0%;
+  top: var(--tooltip-arrow-top, 50%);
   transform: translate(-50%, -50%) rotate(45deg);
 }
 
-/* Delikatna animacja; bez globalnych preferencji */
-@keyframes tt-fade-in {
-  from { opacity: 0; transform: translate(-50%, -98%); }
-  to   { opacity: 1; }
+@keyframes tt-bubble-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+
+  45% {
+    opacity: 1;
+    transform: scale(1.01);
+  }
+
+  75% {
+    opacity: 1;
+    transform: scale(0.995);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
-/* Szacunek dla prefers-reduced-motion – nie narusza istniejących stylów */
 @media (prefers-reduced-motion: reduce) {
-  .tooltip { animation: none; }
+  .bubble {
+    animation: none;
+    opacity: 1;
+  }
 }
