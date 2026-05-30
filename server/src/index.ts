@@ -62,6 +62,7 @@ type Lobby = {
     settings: LobbySettings
     players: Player[]
     _countdownTimer: NodeJS.Timeout | null
+    _idleTimer?: NodeJS.Timeout | null
     _phaseTimer?: NodeJS.Timeout | null
     edgeSides?: Record<string, { fromSide: 'left' | 'right'; toSide: 'left' | 'right' }>
     soloCode?: string | null
@@ -107,6 +108,7 @@ type LobbySettings = {
  *  Konfiguracja
  * ──────────────────────────────────────────────────────────── */
 const MAX_SLOTS = 4
+const LOBBY_IDLE_TIMEOUT_MS = 3 * 60 * 1000
 const BOT_NAME_POOL = [
     'Bot Ania', 'Bot Bartek', 'Bot Celina', 'Bot Daniel', 'Bot Ela', 'Bot Franek',
     'Bot Gabi', 'Bot Henryk', 'Bot Iga', 'Bot Julek', 'Bot Kaja', 'Bot Leon'
@@ -792,6 +794,7 @@ function emitLobby(lobby: Lobby, triggerSocketId: string, action: string, extra?
             ...extra
         }
     })
+    scheduleLobbyIdleCleanup(lobby)
 }
 
 
@@ -800,6 +803,51 @@ function emitPublic(action: string) {
     const pub = listPublicLobbies()
     io.emit('publicLobbies', pub)
     logChange({ action: `${action} -> publicLobbies`, details: { count: pub.length } })
+}
+
+function clearLobbyIdleTimer(lobby: Lobby) {
+    if (lobby._idleTimer) {
+        clearTimeout(lobby._idleTimer)
+        lobby._idleTimer = null
+    }
+}
+
+function deleteIdleLobby(lobby: Lobby) {
+    if (lobbies.get(lobby.code) !== lobby || lobby.state !== 'lobby') return
+
+    if (lobby._countdownTimer) {
+        clearTimeout(lobby._countdownTimer)
+        lobby._countdownTimer = null
+    }
+    clearPhaseTimer(lobby)
+    clearLobbyIdleTimer(lobby)
+
+    io.to(lobby.code).emit('lobbyNotFound', 'Lobby wygaslo przez brak aktywnosci.')
+
+    const room = io.sockets.adapter.rooms.get(lobby.code)
+    if (room) {
+        for (const sid of [...room]) {
+            io.sockets.sockets.get(sid)?.leave(lobby.code)
+        }
+    }
+
+    lobbies.delete(lobby.code)
+    logChange({
+        action: 'lobby:removed(idle)',
+        lobbyCode: lobby.code,
+        details: { idleMs: LOBBY_IDLE_TIMEOUT_MS },
+    })
+    emitPublic('lobby:removed(idle)')
+}
+
+function scheduleLobbyIdleCleanup(lobby: Lobby) {
+    if (lobby.state !== 'lobby') {
+        clearLobbyIdleTimer(lobby)
+        return
+    }
+
+    clearLobbyIdleTimer(lobby)
+    lobby._idleTimer = setTimeout(() => deleteIdleLobby(lobby), LOBBY_IDLE_TIMEOUT_MS)
 }
 
 function generateLobbyCode(): string {
@@ -1561,6 +1609,7 @@ io.on('connection', (socket) => {
                 guessTargets: [],
             }],
             _countdownTimer: null,
+            _idleTimer: null,
             soloCode: null,
 
             // NOWE:
@@ -1570,6 +1619,7 @@ io.on('connection', (socket) => {
 
         lobbies.set(code, lobby)
         recomputeModeByPlayers(lobby)
+        scheduleLobbyIdleCleanup(lobby)
 
         socket.join(code)
         socket.emit('lobbyCreated', { code })
@@ -1688,6 +1738,8 @@ io.on('connection', (socket) => {
         }
 
         if (lobby.players.length === 0) {
+            clearPhaseTimer(lobby)
+            clearLobbyIdleTimer(lobby)
             lobbies.delete(lobby.code)
             logChange({ action: 'lobby:removed(empty)', lobbyCode: lobby.code })
         } else {
